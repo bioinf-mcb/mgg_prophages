@@ -42,14 +42,14 @@ After setting up dependencies (point 2) run prophage detection with default conf
 ```sh
 snakemake --use-conda --cores all --snakefile PROPHAGES
 ```
-<br> <br>
+<br>
 
 **4. Execute prophage detection**
 
 ```sh
 snakemake --use-conda --cores all --snakefile PROPHAGES
 ```
-<br> <br>
+<br> 
 
 
 ## __Details__ (preliminary)
