@@ -61,9 +61,11 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     Preprocess bacterial genomes from input file: get metadata & fasta file.
     """
 
+
     # paths
     records = list(SeqIO.parse(GENBANK_FILE, 'genbank'))
 
+    OUTPUT_DIR = Path(OUTPUT_DIR, '0_input')
     genbank = Path(OUTPUT_DIR, 'bacteria.gb')
     fasta = Path(OUTPUT_DIR, 'bacteria.fasta')
     metadata = Path(OUTPUT_DIR, 'bacteria.tsv')
@@ -82,8 +84,8 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
         recordDESCs.append(record.description)
 
     # save metadata & records
-    metadata_df = pd.DataFrame({'bacteriumID': recordIDs,
-                                'bacteriumDESC': recordDESCs})
+    metadata_df = pd.DataFrame({'contigID': recordIDs,
+                                'contigDESC': recordDESCs})
 
     metadata_df.to_csv(metadata, sep='\t', index=False)
 

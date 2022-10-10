@@ -10,6 +10,7 @@ OUTPUT_DIR = config['OUTPUT_DIR']
 
 VERSION = datetime.now().strftime('%Y-%m-%d')
 PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
+PRIMARY_EXTEND = config['PRIMARY_EXTEND']
 CHECKV_TRESHOLD = config['CHECKV_CONFIDENCE_TRESHOLD']
 
 SETUP_TOOLS_DIR = config['SETUP_TOOLS_DIR']
@@ -18,14 +19,22 @@ VIRSORTER_TOOL = Path(SETUP_TOOLS_DIR, 'virsorter_tool', 'VirSorter', 'wrapper_p
 VIRSORTER_DB = Path(SETUP_TOOLS_DIR, 'virsorter_tool', 'virsorterDB_v2')
 CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
 
+# intermediate folders
+PROCESS_INPUT_DIR = Path(PROPHAGES_DIR, '0_input')
+PRIMARY_DIR = Path(PROPHAGES_DIR, '1_primary')
+
+
+                        #############################################
+                        ######## PREPROCESSING & CHECKPOINTS ########
+                        #############################################
+
 print(f"{bcolors.OKGREEN}---------------------    PROPHAGE DETECTION   ---------------------{bcolors.ENDC}")
 print(f"{bcolors.OKGREEN}---------------------------    START   -----------------------\n{bcolors.ENDC}")
 print(f"{bcolors.WARNING}pVOGs DOWNLOAD DO NOT WORK!{bcolors.ENDC}")
 
-
 # curate & annotate (via PATRIC) bacterial genomes
 print(f"Preprocessing... ", end='')
-BACTERIA_FASTA, BACTERIA_GB, metadata = process_input(GENBANK_FILE, PROPHAGES_DIR)
+BACTERIA_FASTA, BACTERIA_GB, metadata = process_input(GENBANK_FILE, PROCESS_INPUT_DIR)
 print(f"{bcolors.OKGREEN}Done!{bcolors.ENDC}")
 
 # check dependencies
@@ -37,10 +46,20 @@ if not Path(SETUP_TOOLS_DIR).exists():
     exit()
 print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}")
 
+
+                #############################
+                ######## TARGET RULE ########
+                #############################
+
 rule target:
     input:
         Path(PROPHAGES_DIR, 'phispy.tsv'), # run phispy
         Path(PROPHAGES_DIR, 'virsorter') # run virsorter
+
+
+            #####################################
+            ######## PRIMARY PREDICTIONS ########
+            #####################################
 
 # run phispy
 rule phispy:
@@ -77,26 +96,34 @@ rule virsorter:
     # FIX_2: copy in env: lib/perl5/site_perl/5.22.0/Bio to
     # ERROR_3: Can't locate File/Which.pm in @INC:
     # FIX_3: 'cpan install File:Which; '
-    # Using dimond flag speeds up search and sensitivity
+    # Using dimond flag speeds up search and sensitivity, but seems to be corrupted.
         'cpan install File:Which; ' # fix env
         "VIRSORTER_ENV_PATH=$(echo $(conda info | grep 'active env location') | cut -c 23-); " # fix env
         'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; ' # fix env
         'rm -rf {output}; ' # remove old results
         '{input.VIRSORTER_TOOL} -f {input.FASTA} '
-        '--diamond --no_c --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
+        '--diamond --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
 
 
-# rule parse_phagecallers:
-#     input:
-#         virsorter="output/analysis/{genome}/detections/virsorter",
-#         phispy="output/analysis/{genome}/detections/phispy"
-#     output:
-#         "output/analysis/{genome}/{genome}.mf"
-#     params:
-#         extend_value=config['extend_value']
-#     script:
-#         "scripts/parse_phagecallers.py"
-#
+# extract primary prophages (union)
+rule primary:
+    input:
+        phispy=Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),
+        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter', 'Predicted_viral_sequences')
+    output:
+        phispy=Path(PRIMARY_DIR, 'phispy.tsv'),
+        virsorter=Path(PRIMARY_DIR, 'virsorter.tsv'),
+        primary=Path(PROPHAGES_DIR, 'primary.tsv'),
+        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter', 'headers.txt') # vrs intermediate
+    params: PRIMARY_EXTEND=PRIMARY_EXTEND
+    conda: 'envs/base.yml'
+    script: 'scripts/primary.py'
+
+
+            ##################################################
+            ######## DECONTAMINATE PRIMARY DETECTIONS ########
+            ##################################################
+
 # # Run checkv
 # # exiting checkv folders throw exceptions
 # rule run_checkv:
