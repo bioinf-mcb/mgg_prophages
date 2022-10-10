@@ -1,0 +1,45 @@
+from pathlib import Path
+from scripts.utils import bcolors, choose_databases
+
+configfile: 'config.yml'
+SETUP_TOOLS_DIR = config['SETUP_TOOLS_DIR']
+
+print(f"{bcolors.OKGREEN}---------------------    SETUP DATABASES & DEPENDENCIES USED BY MGG WORKFLOWS   ---------------------{bcolors.ENDC}")
+print(f"{bcolors.OKGREEN}Seting up dependencies in {SETUP_TOOLS_DIR} directory. {bcolors.ENDC}\n")
+
+# get target inputs
+databases2download = choose_databases(SETUP_TOOLS_DIR)
+
+rule search:
+    input: databases2download
+
+# download pVOGs database
+rule pVOGs:
+    output: Path(SETUP_TOOLS_DIR, 'pVOGs.hmm')
+    shell:
+        'echo "FTP is corrupted and I cannot downlaod this, omg"; '
+        "touch {output}; "
+        # 'wget http://dmk-brain.ecn.uiowa.edu/pVOGs/downloads/All/AllvogHMMprofiles.tar.gz; '
+        # 'tar -zxvf AllvogHMMprofiles.tar.gz; '
+        # 'cat AllvogHMMprofiles/* > ; '
+
+# download CheckV database
+rule checkvDB:
+    output: directory(Path(SETUP_TOOLS_DIR, 'checkvDB'))
+    conda: 'envs/checkv.yml'
+    shell:
+        'checkv download_database {output}; '
+        'mv {output}/checkv*/* {output}/'
+
+
+# setup virsorter
+rule virsorter:
+    output: directory(Path(SETUP_TOOLS_DIR, 'virsorter_tool'))
+    conda: 'envs/virsorter.yml'
+    shell:
+        'mkdir -p {output}; cd {output}; ' # setup virsorter tool
+        'git clone https://github.com/simroux/VirSorter.git; '
+        'cd VirSorter/Scripts; make clean; make; '
+        'cd {output}; '
+        'wget https://zenodo.org/record/1168727/files/virsorter-data-v2.tar.gz -O virsorterDB_v2.tar.gz; ' # download database
+        'tar xvf virsorterDB_v2.tar.gz; mv virsorter-data virsorterDB_v2; rm -rf virsorterDB_v2.tar.gz; '

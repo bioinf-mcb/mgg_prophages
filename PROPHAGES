@@ -1,0 +1,141 @@
+from pathlib import Path
+from datetime import datetime
+from scripts.utils import bcolors, process_input
+
+configfile: 'config.yml'
+
+# params
+PARAMS = config['PROPHAGES']
+INPUT_DIR = PARAMS['INPUT_DIR']
+OUTPUT_DIR = PARAMS['OUTPUT_DIR']
+EXTENSION = PARAMS['EXTENSION']
+
+VERSION = datetime.now().strftime('%Y-%m-%d')
+PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
+CHECKV_TRESHOLD = PARAMS['CHECKV_CONFIDENCE_TRESHOLD']
+
+SETUP_TOOLS_DIR = config['SETUP_TOOLS_DIR']
+PVOGS_DB = Path(SETUP_TOOLS_DIR, 'pVOGs.hmm')
+VIRSORTER_TOOL = Path(SETUP_TOOLS_DIR, 'virsorter_tool', 'VirSorter', 'wrapper_phage_contigs_sorter_iPlant.pl')
+VIRSORTER_DB = Path(SETUP_TOOLS_DIR, 'virsorter_tool', 'virsorterDB_v2')
+CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
+
+# curate & annotate (via PATRIC) bacterial genomes
+BACTERIA_FASTA, BACTERIA_GB, metadata_df = process_input(INPUT_DIR, PROPHAGES_DIR, EXTENSION)
+print(BACTERIA_FASTA)
+print(f"{bcolors.OKGREEN}---------------------    PROPHAGE DETECTION   ---------------------{bcolors.ENDC}")
+print(f"{bcolors.OKGREEN}---------------------------    START   -----------------------\n{bcolors.ENDC}")
+
+if not Path(SETUP_TOOLS_DIR).exist():
+    print(f"{bcolors.FAIL}Before running this workflow you need to run SetupTools: {bcolors.ENDC}")
+    print(f"{bcolors.FAIL}snakemake --use-conda --cores all --snakefile SetupTools\n{bcolors.ENDC}")
+    print(f"{bcolors.FAIL}Abort!{bcolors.ENDC}")
+    exit()
+
+
+rule target:
+    input:
+        Path(PROPHAGES_DIR, 'phispy.tsv'), # run phispy
+        Path(PROPHAGES_DIR, 'virsorter') # run virsorter
+
+# run phispy
+rule phispy:
+    input:
+        genbank=Path(BACTERIA_GB),
+        PVOGS_DB=Path(PVOGS_DB)
+    output: Path(PROPHAGES_DIR, 'phispy.tsv')
+    conda: "envs/phispy.yml"
+    threads: 16
+    shell:
+        'phispy_folder=$(dirname {output})/$(basename {output} .tsv); '
+        'PhiSpy.py {input.genbank} --phmms {input.PVOGS_DB} -o $phispy_folder --threads {threads} --color; '
+        'mv $phispy_folder/prophage_coordinates.tsv {output}; '
+        'rm -rf $phispy_folder; '
+
+
+# run virsorter
+rule virsorter:
+    input:
+        FASTA=Path(BACTERIA_FASTA),
+        VIRSORTER_TOOL=Path(VIRSORTER_TOOL),
+        VIRSORTER_DB=Path(VIRSORTER_DB)
+    output: directory(Path(PROPHAGES_DIR, 'virsorter'))
+    conda: 'envs/virsorter.yml'
+    threads: 16
+    shell:
+    ####################################################################################
+    ############################### VIRSORTER IS BUGGY! ################################
+    ####### A LOT OF FIXES ARE IMPLEMENTED HERE, BUT MAKE SURE IF IT IS WORKING! #######
+    ####################################################################################
+    # ERROR_1: problems with gcc compilation of step 3 (VirSorter result file is empty)
+    # FIX_1: use flag --no_c in virsorter run
+    # ERROR_2: Step 1 failed, we stop there: either (...) not found
+    # FIX_2: copy in env: lib/perl5/site_perl/5.22.0/Bio to
+    # ERROR_3: Can't locate File/Which.pm in @INC:
+    # FIX_3: 'cpan install File:Which; '
+        'cpan install File:Which; ' # fix env
+        "VIRSORTER_ENV_PATH=$(echo $(conda info | grep 'active env location') | cut -c 23-); " # fix env
+        'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; ' # fix env
+        'rm -rf {output}; ' # remove old results
+        '{input.VIRSORTER_TOOL} -f {input.FASTA} '
+        '--ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
+
+
+# rule parse_phagecallers:
+#     input:
+#         virsorter="output/analysis/{genome}/detections/virsorter",
+#         phispy="output/analysis/{genome}/detections/phispy"
+#     output:
+#         "output/analysis/{genome}/{genome}.mf"
+#     params:
+#         extend_value=config['extend_value']
+#     script:
+#         "scripts/parse_phagecallers.py"
+#
+# # Run checkv
+# # exiting checkv folders throw exceptions
+# rule run_checkv:
+#     input:
+#         "output/analysis/{genome}/{genome}.mf"
+#     output:
+#         directory("output/analysis/{genome}/checkv")
+#     params:
+#         database="databases/checkv-db-v1.0"
+#     conda:
+#         "scripts/conda-envs/envs/checkv.yaml"
+#     shell:
+#         "echo Checkv splits error if there was no phages ...; "
+#         "if checkv end_to_end {input} {output} -d {params.database}; then "
+#         "   echo 'Checkv runned successfuly'; "
+#         "else "
+#         # "   echo 'CheckV didn't perform analysis! Creating empty folder.'"
+#         "   mkdir -p {output}; "
+#         "fi "
+#
+#
+#
+# rule parse_checkv:
+#     input:
+#         "output/analysis/{genome}/checkv"
+#     output:
+#         "output/analysis/{genome}/prophages.tsv"
+#     params:
+#         edge_distance=config['edge_distance']
+#     script:
+#         "scripts/parse_checkv.py"
+#
+#
+# rule get_results:
+#     input:
+#         prophages = expand("output/analysis/{genome}/prophages.tsv", genome=config['genomes']),
+#     output:
+#         results_tsv = "output/results/results.tsv",
+#     params:
+#         phage_names = "databases/phage-names.txt",
+#         bacteria_fasta_dir = "output/preprocessing/genomes/fasta/",
+#         phage_metadata = "output/preprocessing/genomes-preproccessing-metadata.txt",
+#         intact = INTACT,
+#         incomplete = INCOMPLETE
+#
+#     script:
+#         "scripts/get_results.py"

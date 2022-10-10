@@ -1,0 +1,6 @@
+test
+.snakemake
+tmp
+scripts/__pycache__
+scripts/.DS_Store
+OUTPUT_PROPHAGES

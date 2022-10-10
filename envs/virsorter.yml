@@ -1,0 +1,23 @@
+name: virsorter
+prefix: virsorter
+channels:
+  - anaconda
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+  - dan_blanchard
+dependencies:
+   - mcl=14.137
+   - muscle
+   - blast
+   - perl-bioperl
+   - perl-file-which
+   - hmmer=3.1b2
+   - perl-parallel-forkmanager
+   - perl-list-moreutils
+   - diamond=0.9.14
+   - make
+   - perl-cpan
+   - gcc
+   - metagene_annotator
