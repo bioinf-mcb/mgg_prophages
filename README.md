@@ -9,11 +9,11 @@ MGG snakemake workflow for confident prophage detection. To run workflow customi
 ### Clone repo & install snakemake
 
 ```sh
-git clone https://github.com/bioinf-mcb/mgg_database
+git clone https://github.com/bioinf-mcb/mgg_prophages
 conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=1.0.1
 ```
 
-### Setup MGG database tools
+### Setup MGG prophage detection
 
 <div align="justify">
 Download dependencies of prophage workflow by executing SetupTools to specified directory in config file.
