@@ -21,26 +21,12 @@ def choose_databases(SETUP_TOOLS_DIR):
     """ Get targets (paths) to snakemake workflow depending on user input. """
 
     databases2download = []
-
-    print('Which tools should I setup?: ')
-    ncbi = input('Download NCBI (1_INPHARED) [8G] [Y/N]: ')
-    prophages = input('Prophage detection (2_PROPHAGES) [21G] [Y/N]: ')
+    prophages = input(f'Setup prophage detection in {SETUP_TOOLS_DIR} (PROPHAGES) [21G]? [Y/N]: ')
     print('')
-
-    # setup NCBI download
-    if ncbi == 'Y':
-        print(f'{bcolors.OKGREEN}Download NCBI (1_INPHARED) - SETUP{bcolors.ENDC}')
-        checkvdb = Path(SETUP_TOOLS_DIR, 'checkvDB')
-        databases2download.append(checkvdb)
-    elif ncbi == 'N':
-        pass
-    else:
-        print(f'Choose Y or N. Wrong option {ncbi}! Rerun!')
-        exit()
 
     # setup prophage detection
     if prophages == 'Y':
-        print(f'{bcolors.OKGREEN}Prophage detection (2_PROPHAGES) - SETUP{bcolors.ENDC}')
+        print(f'{bcolors.OKGREEN}Setting up prophage detection!{bcolors.ENDC}')
         pvogs = Path(SETUP_TOOLS_DIR, 'pVOGs.hmm')
         checkvdb = Path(SETUP_TOOLS_DIR, 'checkvDB')
         virsorter = Path(SETUP_TOOLS_DIR, 'virsorter_tool')
@@ -74,9 +60,6 @@ def process_input(INPUT_DIR, OUTPUT_DIR, EXTENSION):
     Preprocess bacterial genomes from input directory.
     Get one fast file with curated record identifiers.
     Save metadata table with processed data.
-
-    Upload it to PATRIC.
-    Attempt to download from PATRIC.
     """
 
     username, userpasswors = '', ''
