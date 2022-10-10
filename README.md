@@ -1,7 +1,7 @@
 # __MGG prophages__
 
 <div align="justify">
-MGG snakemake workflow for confident prophage detection in **annotated** bacterial genomes.
+MGG snakemake workflow for confident prophage detection in annotated bacterial genomes.
 </div> <br>
 
 ## __Steps__ (Linux)
@@ -49,7 +49,7 @@ snakemake --use-conda --cores all --snakefile PROPHAGES
 ```sh
 snakemake --use-conda --cores all --snakefile PROPHAGES
 ```
-<br> 
+<br>
 
 
 ## __Details__ (preliminary)
