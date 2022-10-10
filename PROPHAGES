@@ -78,7 +78,7 @@ rule virsorter:
         'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; ' # fix env
         'rm -rf {output}; ' # remove old results
         '{input.VIRSORTER_TOOL} -f {input.FASTA} '
-        '--ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
+        '--diamond --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
 
 
 # rule parse_phagecallers:

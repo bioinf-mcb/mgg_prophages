@@ -1,7 +1,7 @@
 # __MGG prophages__
 
 <div align="justify">
-MGG snakemake workflow for confident prophage detection.
+MGG snakemake workflow for confident prophage detection in **annotated** bacterial genomes.
 </div> <br>
 
 ## __Steps__ (Linux)
@@ -21,15 +21,13 @@ To run workflow customize config file (config.yml), download dependencies (Setup
 
 **1. Customize config file (config.yml)**
 
-Config file description:
-* Directory to download and install dependencies (SETUP_TOOLS_DIR)
-* Params for NCBI workflow (INPHARED).
-* Params for prophage detection workflow (PROPHAGES).
+1. Directory to download and install dependencies (SETUP_TOOLS_DIR).
+2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE)
 
 **2. Download dependencies (SetupTools)**
 
 <div align="justify">
-Executing command below will guide you through seting up dependencies. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
+Executing command below will guide you through setting up dependencies. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
 </div> <br>
 
 ```sh
