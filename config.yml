@@ -3,7 +3,7 @@ SETUP_TOOLS_DIR: /home/MCB/jkoszucki/phagedb/others/MGG_DATABASE_SETUP
 
 # PROPHAGES params
 PROPHAGES:
-  INPUT_DIR: test # bacterial genome per file
-  OUTPUT_DIR: .
+  INPUT_DIR: test # one bacterial genome per file
+  OUTPUT_DIR: . # output directory
   EXTENSION: fasta # input files extension
   CHECKV_CONFIDENCE_TRESHOLD: 95 # prophage extraction
