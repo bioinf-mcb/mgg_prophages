@@ -18,7 +18,8 @@ class bcolors:
 
 
 def choose_databases(SETUP_TOOLS_DIR):
-    """ Get targets (paths) to snakemake workflow depending on user input. """
+    """ SetupTools:
+    Get targets (paths) to snakemake workflow depending on user input. """
 
     databases2download = []
     prophages = input(f'Setup prophage detection in {SETUP_TOOLS_DIR} (PROPHAGES) [21G]? [Y/N]: ')
@@ -55,59 +56,38 @@ def choose_databases(SETUP_TOOLS_DIR):
     return databases2download_filtered
 
 
-def process_input(INPUT_DIR, OUTPUT_DIR, EXTENSION):
+def process_input(GENBANK_FILE, OUTPUT_DIR):
+    """ PROPHAGES:
+    Preprocess bacterial genomes from input file: get metadata & fasta file.
     """
-    Preprocess bacterial genomes from input directory.
-    Get one fast file with curated record identifiers.
-    Save metadata table with processed data.
-    """
-
-    username, userpasswors = '', ''
-
-    fasta, metadata_df = load_bacteria_records(INPUT_DIR, OUTPUT_DIR, EXTENSION)
-    genbank = submit2PATRIC(fasta, username, userpasswors)
-
-    return fasta, genbank, metadata_df
-
-
-def load_bacteria_records(INPUT_DIR, OUTPUT_DIR, EXTENSION):
-    """
-    Load fasta files from input directory to a list of records and curate IDs.
-    """
-
-    # warning
-    print('Add your own curated ID & N50 calculation!')
 
     # paths
-    paths = list(Path(INPUT_DIR).glob(f'*.{EXTENSION}'))
+    records = list(SeqIO.parse(GENBANK_FILE, 'genbank'))
+
+    genbank = Path(OUTPUT_DIR, 'bacteria.gb')
     fasta = Path(OUTPUT_DIR, 'bacteria.fasta')
-    metadata_table = Path(OUTPUT_DIR, 'bacteria.tsv')
+    metadata = Path(OUTPUT_DIR, 'bacteria.tsv')
 
     # create folder
     Path(OUTPUT_DIR).mkdir(exist_ok=True, parents=True)
 
+    # save fasta & gebank
+    n = SeqIO.write(records, fasta, 'fasta')
+    n = SeqIO.write(records, genbank, 'genbank')
+
     # get metadata & records
-    records_all = []
-    recordIDs, recordDESCs, ncontigs, paths2frame = [], [], [], []
-    for path in paths:
-        records = list(SeqIO.parse(path, 'fasta'))
-        for record in records:
-            recordIDs.append(record.id)
-            recordDESCs.append(record.description)
-            ncontigs.append(len(records))
-            paths2frame.append(path)
-            records_all.append(record)
+    recordIDs, recordDESCs = [], []
+    for record in records:
+        recordIDs.append(record.id)
+        recordDESCs.append(record.description)
 
     # save metadata & records
     metadata_df = pd.DataFrame({'bacteriumID': recordIDs,
-                                'bacteriumDESC': recordDESCs,
-                                'ncontigs': ncontigs,
-                                'path': paths2frame})
+                                'bacteriumDESC': recordDESCs})
 
-    n = SeqIO.write(records_all, fasta, 'fasta')
-    metadata_df.to_csv(metadata_table, sep='\t', index=False)
+    metadata_df.to_csv(metadata, sep='\t', index=False)
 
-    return fasta, metadata_df
+    return fasta, genbank, metadata
 
 
 def submit2PATRIC(fasta, username, userpasswors):

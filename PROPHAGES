@@ -4,15 +4,13 @@ from scripts.utils import bcolors, process_input
 
 configfile: 'config.yml'
 
-# params
-PARAMS = config['PROPHAGES']
-INPUT_DIR = PARAMS['INPUT_DIR']
-OUTPUT_DIR = PARAMS['OUTPUT_DIR']
-EXTENSION = PARAMS['EXTENSION']
+# paths & params
+GENBANK_FILE = config['GENBANK_FILE']
+OUTPUT_DIR = config['OUTPUT_DIR']
 
 VERSION = datetime.now().strftime('%Y-%m-%d')
 PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
-CHECKV_TRESHOLD = PARAMS['CHECKV_CONFIDENCE_TRESHOLD']
+CHECKV_TRESHOLD = config['CHECKV_CONFIDENCE_TRESHOLD']
 
 SETUP_TOOLS_DIR = config['SETUP_TOOLS_DIR']
 PVOGS_DB = Path(SETUP_TOOLS_DIR, 'pVOGs.hmm')
@@ -20,18 +18,24 @@ VIRSORTER_TOOL = Path(SETUP_TOOLS_DIR, 'virsorter_tool', 'VirSorter', 'wrapper_p
 VIRSORTER_DB = Path(SETUP_TOOLS_DIR, 'virsorter_tool', 'virsorterDB_v2')
 CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
 
-# curate & annotate (via PATRIC) bacterial genomes
-BACTERIA_FASTA, BACTERIA_GB, metadata_df = process_input(INPUT_DIR, PROPHAGES_DIR, EXTENSION)
-print(BACTERIA_FASTA)
 print(f"{bcolors.OKGREEN}---------------------    PROPHAGE DETECTION   ---------------------{bcolors.ENDC}")
 print(f"{bcolors.OKGREEN}---------------------------    START   -----------------------\n{bcolors.ENDC}")
+print(f"{bcolors.WARNING}pVOGs DOWNLOAD DO NOT WORK!{bcolors.ENDC}")
 
-if not Path(SETUP_TOOLS_DIR).exist():
-    print(f"{bcolors.FAIL}Before running this workflow you need to run SetupTools: {bcolors.ENDC}")
+
+# curate & annotate (via PATRIC) bacterial genomes
+print(f"Preprocessing... ", end='')
+BACTERIA_FASTA, BACTERIA_GB, metadata = process_input(GENBANK_FILE, PROPHAGES_DIR)
+print(f"{bcolors.OKGREEN}Done!{bcolors.ENDC}")
+
+# check dependencies
+print(f"Check dependiencies... ", end='')
+if not Path(SETUP_TOOLS_DIR).exists():
+    print(f"{bcolors.FAIL}Setup dependencies by running: {bcolors.ENDC}")
     print(f"{bcolors.FAIL}snakemake --use-conda --cores all --snakefile SetupTools\n{bcolors.ENDC}")
     print(f"{bcolors.FAIL}Abort!{bcolors.ENDC}")
     exit()
-
+print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}")
 
 rule target:
     input:
@@ -65,7 +69,7 @@ rule virsorter:
     shell:
     ####################################################################################
     ############################### VIRSORTER IS BUGGY! ################################
-    ####### A LOT OF FIXES ARE IMPLEMENTED HERE, BUT MAKE SURE IF IT IS WORKING! #######
+    ######### A LOT OF FIXES ARE IMPLEMENTED HERE TO MAKE SURE IF IT IS WORKING! #######
     ####################################################################################
     # ERROR_1: problems with gcc compilation of step 3 (VirSorter result file is empty)
     # FIX_1: use flag --no_c in virsorter run
@@ -73,12 +77,13 @@ rule virsorter:
     # FIX_2: copy in env: lib/perl5/site_perl/5.22.0/Bio to
     # ERROR_3: Can't locate File/Which.pm in @INC:
     # FIX_3: 'cpan install File:Which; '
+    # Using dimond flag speeds up search and sensitivity
         'cpan install File:Which; ' # fix env
         "VIRSORTER_ENV_PATH=$(echo $(conda info | grep 'active env location') | cut -c 23-); " # fix env
         'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; ' # fix env
         'rm -rf {output}; ' # remove old results
         '{input.VIRSORTER_TOOL} -f {input.FASTA} '
-        '--diamond --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
+        '--diamond --no_c --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
 
 
 # rule parse_phagecallers:

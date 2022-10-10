@@ -1,4 +1,4 @@
-bacteria.gb
+test.gb
 .snakemake
 tmp
 scripts/__pycache__

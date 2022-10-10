@@ -2,6 +2,6 @@
 SETUP_TOOLS_DIR: /home/MCB/jkoszucki/phagedb/others/MGG_DATABASE_SETUP 
 
 # PROPHAGES params
-GENBANK_FILE: test # one bacterial genome per file (fasta & gb)
+GENBANK_FILE: test.gb # one bacterial genome per file (fasta & gb)
 OUTPUT_DIR: . # output directory
 CHECKV_CONFIDENCE_TRESHOLD: 95 # prophage extraction
