@@ -24,6 +24,8 @@ To run workflow customize config file (config.yml), download dependencies (Setup
 1. Directory to download and install dependencies (SETUP_TOOLS_DIR).
 2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE)
 
+**Make sure that phage and protein ids are unique!**
+
 **2. Download dependencies (SetupTools)**
 
 <div align="justify">
