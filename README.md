@@ -16,22 +16,25 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 ### Run prophage detection
 
 <div align="justify">
-To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES).
+To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES). Make sure that bacterial and protein ids are unique!
 </div> <br>
 
 
 **1. Customize config file (config.yml)**
 
 1. Directory to download and install dependencies (SETUP_TOOLS_DIR).
-2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE). <br>
-
-**Make sure that phage and protein ids are unique!** <br> <br>
+2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE). <br><br>
 
 **2. Download dependencies (SetupTools)**
 
 <div align="justify">
-Executing command below will guide you through setting up dependencies. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
-</div> <br> <br>
+To setup dependencies run command below. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
+</div> <br>
+
+```sh
+snakemake --use-conda --cores all --snakefile SetupTools
+```
+<br>
 
 **3. Run test (optional)**
 
@@ -54,4 +57,6 @@ snakemake --use-conda --cores all --snakefile PROPHAGES
 
 ## __Details__ (preliminary)
 
-PROPHAGES - detects prophages in bacterial genomes (VirSorter and PhiSpy curated with checkV)<br>
+<div align="justify">
+Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are decontaminated from bacterial DNA and their completeness is estimated (CheckV). Based, on completeness prophages are filtered to obtain only high-confidence prophages.
+</div> <br>
