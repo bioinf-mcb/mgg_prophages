@@ -1,7 +1,7 @@
 # __MGG prophages__
 
 <div align="justify">
-MGG snakemake workflow for confident prophage detection. To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES).
+MGG snakemake workflow for confident prophage detection.
 </div> <br>
 
 ## __Steps__ (Linux)
@@ -13,11 +13,10 @@ git clone https://github.com/bioinf-mcb/mgg_prophages
 conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=1.0.1
 ```
 
-### Setup MGG prophage detection
+### Run MGG prophage detection
 
 <div align="justify">
-Download dependencies of prophage workflow by executing SetupTools to specified directory in config file.
-Execute prophage detection by running PROPHAGES snakefile.
+To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES).
 </div> <br>
 
 **1. Customize config file (config.yml)**
@@ -27,7 +26,7 @@ Config file description:
 * Params for NCBI workflow (INPHARED).
 * Params for prophage detection workflow (PROPHAGES).
 
-**2. SetupTools**
+**2. Download dependencies (SetupTools)**
 
 <div align="justify">
 Executing command below will guide you through seting up dependencies. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
@@ -37,11 +36,7 @@ Executing command below will guide you through seting up dependencies. If you al
 snakemake --use-conda --cores all --snakefile SetupTools
 ```
 
-**3. Execute prophage workflow**
-
-<div align="justify">
-Execute workflow.
-</div> <br>
+**3. Execute prophage detection**
 
 ```sh
 snakemake --use-conda --cores all --snakefile PROPHAGES
