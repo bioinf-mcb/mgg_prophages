@@ -19,12 +19,14 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES).
 </div> <br>
 
+
 **1. Customize config file (config.yml)**
 
 1. Directory to download and install dependencies (SETUP_TOOLS_DIR).
-2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE)
+2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE). <br>
 
 **Make sure that phage and protein ids are unique!**
+
 
 **2. Download dependencies (SetupTools)**
 
@@ -32,15 +34,25 @@ To run workflow customize config file (config.yml), download dependencies (Setup
 Executing command below will guide you through setting up dependencies. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
 </div> <br>
 
-```sh
-snakemake --use-conda --cores all --snakefile SetupTools
-```
 
-**3. Execute prophage detection**
+**3. Run test (optional)**
+
+<div align="justify">
+After setting up dependencies (point 2) run prophage detection with default config file paths.
+</div> <br>
 
 ```sh
 snakemake --use-conda --cores all --snakefile PROPHAGES
 ```
+
+
+**4. Execute prophage detection**
+
+```sh
+snakemake --use-conda --cores all --snakefile PROPHAGES
+```
+
+
 
 
 ## __Details__ (preliminary)
