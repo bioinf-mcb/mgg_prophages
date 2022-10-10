@@ -10,7 +10,7 @@ MGG snakemake workflow for confident prophage detection in annotated bacterial g
 
 ```sh
 git clone https://github.com/bioinf-mcb/mgg_prophages
-conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=1.0.1
+conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=1.0.1 pandas datetime
 ```
 
 ### Run prophage detection

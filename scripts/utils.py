@@ -61,11 +61,9 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     Preprocess bacterial genomes from input file: get metadata & fasta file.
     """
 
-
     # paths
     records = list(SeqIO.parse(GENBANK_FILE, 'genbank'))
 
-    OUTPUT_DIR = Path(OUTPUT_DIR, '0_input')
     genbank = Path(OUTPUT_DIR, 'bacteria.gb')
     fasta = Path(OUTPUT_DIR, 'bacteria.fasta')
     metadata = Path(OUTPUT_DIR, 'bacteria.tsv')
@@ -73,25 +71,25 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     # create folder
     Path(OUTPUT_DIR).mkdir(exist_ok=True, parents=True)
 
+    if Path(genbank).exists() or Path(fasta).exists() or Path(metadata).exists():
+        print(f'{bcolors.WARNING}Seems that preprocessing was already runned! Continue with snakemake only!{bcolors.ENDC}')
+
     # save fasta & gebank
     n = SeqIO.write(records, fasta, 'fasta')
     n = SeqIO.write(records, genbank, 'genbank')
 
     # get metadata & records
-    recordIDs, recordDESCs = [], []
+    recordIDs, recordDESCs, recordLEN = [], [], []
     for record in records:
         recordIDs.append(record.id)
         recordDESCs.append(record.description)
+        recordLEN.append(len(record.seq))
 
     # save metadata & records
     metadata_df = pd.DataFrame({'contigID': recordIDs,
-                                'contigDESC': recordDESCs})
+                                'contigDESC': recordDESCs,
+                                'contigLEN': recordLEN})
 
     metadata_df.to_csv(metadata, sep='\t', index=False)
 
     return fasta, genbank, metadata
-
-
-def submit2PATRIC(fasta, username, userpasswors):
-    """ ... """
-    return 'test/bacterium.gb'

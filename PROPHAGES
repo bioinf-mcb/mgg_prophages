@@ -44,7 +44,7 @@ if not Path(SETUP_TOOLS_DIR).exists():
     print(f"{bcolors.FAIL}snakemake --use-conda --cores all --snakefile SetupTools\n{bcolors.ENDC}")
     print(f"{bcolors.FAIL}Abort!{bcolors.ENDC}")
     exit()
-print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}")
+print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}\n")
 
 
                 #############################
@@ -53,8 +53,8 @@ print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}")
 
 rule target:
     input:
-        Path(PROPHAGES_DIR, 'phispy.tsv'), # run phispy
-        Path(PROPHAGES_DIR, 'virsorter') # run virsorter
+        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'), # run phispy
+        Path(PRIMARY_DIR, 'raw', 'virsorter') # run virsorter
 
 
             #####################################
@@ -66,9 +66,9 @@ rule phispy:
     input:
         genbank=Path(BACTERIA_GB),
         PVOGS_DB=Path(PVOGS_DB)
-    output: Path(PROPHAGES_DIR, 'phispy.tsv')
+    output: Path(PRIMARY_DIR, 'raw', 'phispy.tsv')
     conda: "envs/phispy.yml"
-    threads: 16
+    threads: workflow.cores * 1.0
     shell:
         'phispy_folder=$(dirname {output})/$(basename {output} .tsv); '
         'PhiSpy.py {input.genbank} --phmms {input.PVOGS_DB} -o $phispy_folder --threads {threads} --color; '
@@ -82,9 +82,9 @@ rule virsorter:
         FASTA=Path(BACTERIA_FASTA),
         VIRSORTER_TOOL=Path(VIRSORTER_TOOL),
         VIRSORTER_DB=Path(VIRSORTER_DB)
-    output: directory(Path(PROPHAGES_DIR, 'virsorter'))
+    output: directory(Path(PRIMARY_DIR, 'raw', 'virsorter'))
     conda: 'envs/virsorter.yml'
-    threads: 16
+    threads: workflow.cores * 1.0
     shell:
     ####################################################################################
     ############################### VIRSORTER IS BUGGY! ################################
@@ -96,7 +96,7 @@ rule virsorter:
     # FIX_2: copy in env: lib/perl5/site_perl/5.22.0/Bio to
     # ERROR_3: Can't locate File/Which.pm in @INC:
     # FIX_3: 'cpan install File:Which; '
-    # Using dimond flag speeds up search and sensitivity, but seems to be corrupted.
+    # Using dimond flag speeds up search and sensitivity.
         'cpan install File:Which; ' # fix env
         "VIRSORTER_ENV_PATH=$(echo $(conda info | grep 'active env location') | cut -c 23-); " # fix env
         'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; ' # fix env
@@ -109,12 +109,13 @@ rule virsorter:
 rule primary:
     input:
         phispy=Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),
-        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter', 'Predicted_viral_sequences')
+        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter', 'Predicted_viral_sequences'),
+        metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv')
     output:
         phispy=Path(PRIMARY_DIR, 'phispy.tsv'),
         virsorter=Path(PRIMARY_DIR, 'virsorter.tsv'),
-        primary=Path(PROPHAGES_DIR, 'primary.tsv'),
-        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter', 'headers.txt') # vrs intermediate
+        primary=Path(PRIMARY_DIR, 'primary.tsv'),
+        headers=Path(PRIMARY_DIR, 'raw', 'virsorter', 'headers.txt') # vrs intermediate
     params: PRIMARY_EXTEND=PRIMARY_EXTEND
     conda: 'envs/base.yml'
     script: 'scripts/primary.py'
