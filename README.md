@@ -16,7 +16,7 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 ### Run prophage detection
 
 <div align="justify">
-To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES). Make sure that bacterial and protein ids are unique!
+To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES). Make sure that bacterial and protein ids are unique! Avoid white characters in bacterial contig ids!
 </div> <br>
 
 
