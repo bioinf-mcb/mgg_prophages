@@ -13,7 +13,7 @@ git clone https://github.com/bioinf-mcb/mgg_prophages
 conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=1.0.1
 ```
 
-### Run MGG prophage detection
+### Run prophage detection
 
 <div align="justify">
 To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES).
