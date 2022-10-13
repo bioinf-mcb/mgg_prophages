@@ -63,23 +63,26 @@ from Bio import SeqIO
 from pathlib import Path
 
 # paths & params
-# phispy_table = Path(snakemake.input.phispy)
-# virsorter_dir = Path(snakemake.input.virsorter)
+phispy = Path(snakemake.input.phispy)
+virsorter = Path(snakemake.input.virsorter)
+metadata = Path(snakemake.input.metadata)
+
+union_output = Path(snakemake.output.union)
+primary_output = Path(snakemake.output.primary)
+phispy_output = Path(snakemake.output.phispy)
+virsorter_output = Path(snakemake.output.virsorter, 'Predicted_viral_sequences')
+virsorter_raw = Path(snakemake.output.virsorter_raw)
+
+# # paths
+# phispy_table = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/raw/phispy.tsv')
+# virsorter_dir = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/raw/virsorter/Predicted_viral_sequences')
+# metadata_table = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/0_input/bacteria.tsv')
 #
-# phispy = Path(snakemake.output.phispy)
-# virsorter = Path(snakemake.output.virsorter)
-# primary = Path(snakemake.output.primary)
-# extend = Path(snakemake.params.PRIMARY_EXTEND # bp to extend union of detections)
-
-# paths
-phispy_table = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/phispy.tsv')
-virsorter_dir = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/virsorter/Predicted_viral_sequences')
-metadata_table = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/bacteria.tsv')
-
-phispy_output = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/tmp1.tsv')
-headers_output = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/headers.tsv')
-virsorter_output = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/tmp2.tsv')
-primary_output = Path('/home/MCB/jkoszucki/PROPHAGES_2022-10-10/tmp3.tsv')
+# phispy_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/1_phispy.tsv')
+# virsorter_raw = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/0_raw_virsorter.tsv')
+# virsorter_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/2_virsorter.tsv')
+# primary_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/3_primary.tsv')
+# union_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/4_union.tsv')
 
 
                         ##############################
@@ -111,11 +114,11 @@ for fasta in virsorter_fasta:
         headers.append(record.id) # extract headers
 
 # save raw headers
-with open(headers_output, 'w+') as f:
-    f.write('\n'.join(headers))
+with open(virsorter_raw, 'w+') as f:
+    f.write('\n'.join(headers) + '\n')
 
 ### extract localisation & contigID
-contigIDs, starts, ends = [], [], []
+contigIDs, starts, ends, circurality = [], [], [], []
 for header in headers:
     # phage within contig
     try:
@@ -131,6 +134,12 @@ for header in headers:
     # phage as a whole contig
     except AttributeError:
         try:
+            # check if contig is circular
+            if '-circular' in header:
+                circular = True
+                header = header.replace('-circular', '')
+            else: circular = False
+
             contigID = re.search('VIRSorter_.*-cat', header).group() # contigID
             contigID = contigID.strip('VIRSorter_').strip('-cat')
             start, end = 1, 'contig_len'
@@ -142,11 +151,12 @@ for header in headers:
     contigIDs.append(contigID)
     starts.append(start)
     ends.append(end)
-
+    circurality.append(circular)
 # virsorter table
 virsorter_df = pd.DataFrame({'contigID': contigIDs,
                              'start': starts,
-                             'end': ends})
+                             'end': ends,
+                             'circular': circurality})
 
 virsorter_df['tool'] = 'virsorter'
 virsorter_df.to_csv(virsorter_output, sep='\t', index=False)
@@ -164,17 +174,37 @@ metadata_df = pd.read_csv(metadata_table, sep='\t') # bacterial metadata
 metadata_df['contigID'] = metadata_df.apply(lambda row: row['contigID'].replace('.', '_'), axis=1) # make pretty
 primary_df.reset_index(drop=True, inplace=True) # make pretty
 
-# get whole virsorter contigs (end of prophage is length of the contig)
-filt_contigs = (primary_df['end'] == 'contig_len')
-contigs_df = primary_df.loc[filt_contigs]
-contigs_df.merge(metadata_df, on='contigID', how='left')
-contigs_df['end'] = contigs_df['contigLEN']
+# add contig info
+primary_df = primary_df.merge(metadata_df, on='contigID', how='left')
 
-# combine whole contigs & rest
-rest_df = primary_df.loc[~filt_contigs]
-rest_df.merge(metadata_df, on='contigID', how='left')
-primary_df = pd.concat(contigs_df, rest_df)
+# get end for whole contig prophages
+filt = (primary_df['end'] == 'contig_len')
+primary_df.loc[filt, 'end'] = primary_df.loc[filt, 'contigLEN']
 
+# sort
+primary_df.sort_values(['contigID', 'contigLEN'], ascending=[False, False], inplace=True)
+primary_df.fillna('None', inplace=True)
 primary_df.to_csv(primary_output, sep='\t', index=False)
 
-# primary_df.groupby('contigID')
+
+# union of detections (collapse overlapping ones) per bacterial contig
+groups = primary_df.groupby('contigID')
+unions, contigIDs = [], []
+new_start, new_end = [], []
+for contigID, group in groups:
+    starts, ends = group['start'].to_list(), group['end'].to_list()
+    locations = zip(starts, ends)
+
+    unions_per_contig = collapse_overlapping(locations)
+
+    contigIDs.append(contigID)
+    for start, end in unions_per_contig:
+        new_start.append(start)
+        new_end.append(end)
+
+union_df = pd.DataFrame({'contigID': contigIDs,
+                             'start': new_start,
+                             'end': new_end})
+
+union_df = union_df.merge(primary_df, on='contigID', how='left', suffixes=('_union', '_primary'))
+union_df.to_csv(union_output, sep='\t', index=False)

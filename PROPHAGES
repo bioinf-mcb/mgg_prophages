@@ -54,7 +54,8 @@ print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}\n")
 rule target:
     input:
         Path(PRIMARY_DIR, 'raw', 'phispy.tsv'), # run phispy
-        Path(PRIMARY_DIR, 'raw', 'virsorter') # run virsorter
+        Path(PRIMARY_DIR, 'raw', 'virsorter'),   # run virsorter
+        Path(PRIMARY_DIR, '3_union.tsv') # get collased detections
 
 
             #####################################
@@ -88,7 +89,7 @@ rule virsorter:
     shell:
     ####################################################################################
     ############################### VIRSORTER IS BUGGY! ################################
-    ######### A LOT OF FIXES ARE IMPLEMENTED HERE TO MAKE SURE IF IT IS WORKING! #######
+    ######### A LOT OF FIXES ARE IMPLEMENTED HERE TO MAKE SURE IT IS WORKING! ##########
     ####################################################################################
     # ERROR_1: problems with gcc compilation of step 3 (VirSorter result file is empty)
     # FIX_1: use flag --no_c in virsorter run
@@ -97,26 +98,26 @@ rule virsorter:
     # ERROR_3: Can't locate File/Which.pm in @INC:
     # FIX_3: 'cpan install File:Which; '
     # Using dimond flag speeds up search and sensitivity.
-        'cpan install File:Which; ' # fix env
+        'cpan install File:Which; '                                                            # fix env
         "VIRSORTER_ENV_PATH=$(echo $(conda info | grep 'active env location') | cut -c 23-); " # fix env
-        'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; ' # fix env
-        'rm -rf {output}; ' # remove old results
+        'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; '                     # fix env
+        'rm -rf {output}; '                                                                    # remove old results
         '{input.VIRSORTER_TOOL} -f {input.FASTA} '
         '--diamond --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
 
 
-# extract primary prophages (union)
+# extract primary prophages & collapse overlapping ones (union)
 rule primary:
     input:
         phispy=Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),
-        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter', 'Predicted_viral_sequences'),
+        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter'),
         metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv')
     output:
-        phispy=Path(PRIMARY_DIR, 'phispy.tsv'),
-        virsorter=Path(PRIMARY_DIR, 'virsorter.tsv'),
-        primary=Path(PRIMARY_DIR, 'primary.tsv'),
-        headers=Path(PRIMARY_DIR, 'raw', 'virsorter', 'headers.txt') # vrs intermediate
-    params: PRIMARY_EXTEND=PRIMARY_EXTEND
+        union = Path(PRIMARY_DIR, '3_union.tsv'),   # collapsed primary
+        primary =  Path(PRIMARY_DIR, '2_primary.tsv'),  # primary - pretty PhiSpy & VirSorter results
+        phispy = Path(PRIMARY_DIR, '1_phispy.tsv'),     # phispy results
+        virsorter =  Path(PRIMARY_DIR, '1_virsorter.tsv'),   # virsorter results
+        virsorter_raw = Path(PRIMARY_DIR, '0_virsorter_raw.tsv')    # raw virsorter results
     conda: 'envs/base.yml'
     script: 'scripts/primary.py'
 
@@ -125,17 +126,13 @@ rule primary:
             ######## DECONTAMINATE PRIMARY DETECTIONS ########
             ##################################################
 
-# # Run checkv
-# # exiting checkv folders throw exceptions
-# rule run_checkv:
-#     input:
-#         "output/analysis/{genome}/{genome}.mf"
-#     output:
-#         directory("output/analysis/{genome}/checkv")
+# Run checkv - decontaminate prophages
+# rule checkv:
+#     input: Path()
+#     output: directory(Path(checkv))
 #     params:
 #         database="databases/checkv-db-v1.0"
-#     conda:
-#         "scripts/conda-envs/envs/checkv.yaml"
+#     conda: "scripts/checkv.yaml"
 #     shell:
 #         "echo Checkv splits error if there was no phages ...; "
 #         "if checkv end_to_end {input} {output} -d {params.database}; then "
@@ -144,18 +141,18 @@ rule primary:
 #         # "   echo 'CheckV didn't perform analysis! Creating empty folder.'"
 #         "   mkdir -p {output}; "
 #         "fi "
-#
-#
-#
-# rule parse_checkv:
-#     input:
-#         "output/analysis/{genome}/checkv"
-#     output:
-#         "output/analysis/{genome}/prophages.tsv"
+
+
+
+# rule results:
+#     input: ''
+# cities =
+# checkv =
+#     output: ''
 #     params:
-#         edge_distance=config['edge_distance']
-#     script:
-#         "scripts/parse_checkv.py"
+# EDGE_DISTANCE=EDGE_DISTANCE,
+# CHECKV_TRESHOLD=CHECKV_TRESHOLD
+#     script: "scripts/results.py"
 #
 #
 # rule get_results:

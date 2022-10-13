@@ -72,7 +72,8 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     Path(OUTPUT_DIR).mkdir(exist_ok=True, parents=True)
 
     if Path(genbank).exists() or Path(fasta).exists() or Path(metadata).exists():
-        print(f'{bcolors.WARNING}Seems that preprocessing was already runned! Continue with snakemake only!{bcolors.ENDC}')
+        print(f'{bcolors.WARNING}Seems that preprocessing was already runned! Continue with snakemake only! {bcolors.ENDC}', end='')
+        return fasta, genbank, metadata
 
     # save fasta & gebank
     n = SeqIO.write(records, fasta, 'fasta')
