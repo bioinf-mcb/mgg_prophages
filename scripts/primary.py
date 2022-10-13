@@ -63,15 +63,16 @@ from Bio import SeqIO
 from pathlib import Path
 
 # paths & params
-phispy = Path(snakemake.input.phispy)
-virsorter = Path(snakemake.input.virsorter)
-metadata = Path(snakemake.input.metadata)
+phispy_table = Path(snakemake.input.phispy)
+virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
+metadata_table = Path(snakemake.input.metadata)
 
 union_output = Path(snakemake.output.union)
 primary_output = Path(snakemake.output.primary)
 phispy_output = Path(snakemake.output.phispy)
-virsorter_output = Path(snakemake.output.virsorter, 'Predicted_viral_sequences')
+virsorter_output = Path(snakemake.output.virsorter)
 virsorter_raw = Path(snakemake.output.virsorter_raw)
+
 
 # # paths
 # phispy_table = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/raw/phispy.tsv')
