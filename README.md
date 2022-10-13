@@ -59,4 +59,6 @@ snakemake --use-conda --cores all --snakefile PROPHAGES
 
 <div align="justify">
 Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are decontaminated from bacterial DNA and their completeness is estimated (CheckV). Based, on completeness prophages are filtered to obtain only high-confidence prophages.
+
+Prophage circurality is detected only for prophages found as whole contigs and it's evalueated by VirSorter.
 </div> <br>
