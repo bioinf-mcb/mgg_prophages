@@ -53,9 +53,9 @@ print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}\n")
 
 rule target:
     input:
-        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'), # run phispy
-        Path(PRIMARY_DIR, 'raw', 'virsorter'),   # run virsorter
-        Path(PRIMARY_DIR, '3_union.tsv') # get collased detections
+        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),     # run phispy
+        Path(PRIMARY_DIR, 'raw', 'virsorter'),      # run virsorter
+        Path(PRIMARY_DIR, '3_union.tsv')            # get collased detections
 
 
             #####################################
@@ -111,13 +111,16 @@ rule primary:
     input:
         phispy=Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),
         virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter'),
-        metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv')
+        metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv'),
+        genbank=Path(BACTERIA_GB)
     output:
-        union = Path(PRIMARY_DIR, '3_union.tsv'),   # collapsed primary
+        fasta = Path(PRIMARY_DIR, 'prophages.fasta'),   # fasta prophages
+        union = Path(PRIMARY_DIR, '3_union.tsv'),       # collapsed primary prophages
         primary =  Path(PRIMARY_DIR, '2_primary.tsv'),  # primary - pretty PhiSpy & VirSorter results
         phispy = Path(PRIMARY_DIR, '1_phispy.tsv'),     # phispy results
-        virsorter =  Path(PRIMARY_DIR, '1_virsorter.tsv'),   # virsorter results
+        virsorter =  Path(PRIMARY_DIR, '1_virsorter.tsv'),          # virsorter results
         virsorter_raw = Path(PRIMARY_DIR, '0_virsorter_raw.tsv')    # raw virsorter results
+    params: PRIMARY_EXTEND=PRIMARY_EXTEND
     conda: 'envs/base.yml'
     script: 'scripts/primary.py'
 

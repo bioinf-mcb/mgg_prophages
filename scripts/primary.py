@@ -1,6 +1,8 @@
 """
 Get union of detections from VirSorter and PhiSpy.
-Extend detections by extend variable (default 2kb).
+Extend detections by extend variable from config file (default 2kb).
+
+Extract prophages to fasta files and genbank files (input bacterial annotation).
 
 Putative VirSorter prophages:
 categories: 1,2 (whole contig)
@@ -8,6 +10,14 @@ categories: 4,5 (within contig)
 
 Putative PhiSpy prophages: all
 """
+
+# modules
+import re
+import pandas as pd
+from pathlib import Path
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 # functions
 def collapse_overlapping(input_detections):
@@ -56,34 +66,45 @@ def collapse_overlapping(input_detections):
     return detections
 
 
-# modules
-import re
-import pandas as pd
-from Bio import SeqIO
-from pathlib import Path
+def extract_phages(row, records):
+    """ Extract fragment of bacterial genome
+    records: bacterial records
+    row: phage metadata from dataframe
+    """
+
+    contigID, start, end = row['contigID'], row['start'], row['end']
+
+    for record in records:
+        if record.id == contigID:
+            break
+
+    seq = Seq(record.seq[start:end+1])
+
+    return pd.Series([seq])
+
+
+def get_records(row):
+    """ Convert dataframe to records. """
+
+    contigID, start, end, seq = row['contigID'], row['start'], row['end'], row['seq']
+    record = SeqRecord(seq=Seq(seq), id=f'{contigID}_{start}_{end}')
+    return record
+
 
 # paths & params
 phispy_table = Path(snakemake.input.phispy)
 virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
 metadata_table = Path(snakemake.input.metadata)
+genbank = Path(snakemake.input.genbank)
 
+fasta_output = snakemake.output.fasta, # prophage fasta
 union_output = Path(snakemake.output.union)
 primary_output = Path(snakemake.output.primary)
 phispy_output = Path(snakemake.output.phispy)
 virsorter_output = Path(snakemake.output.virsorter)
 virsorter_raw = Path(snakemake.output.virsorter_raw)
 
-
-# # paths
-# phispy_table = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/raw/phispy.tsv')
-# virsorter_dir = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/raw/virsorter/Predicted_viral_sequences')
-# metadata_table = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/0_input/bacteria.tsv')
-#
-# phispy_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/1_phispy.tsv')
-# virsorter_raw = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/0_raw_virsorter.tsv')
-# virsorter_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/2_virsorter.tsv')
-# primary_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/3_primary.tsv')
-# union_output = Path('/home/MCB/jkoszucki/phagedb/others/PROPHAGES_2022-10-13/1_primary/results/4_union.tsv')
+PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
 
 
                         ##############################
@@ -164,9 +185,10 @@ virsorter_df.to_csv(virsorter_output, sep='\t', index=False)
 
 
                         ########################################
-                        ####### GET UNION OF RESULTS ###########
+                        ####### GET FINAL DETECTIONS ###########
                         ########################################
 
+### primary detections
 # load tables
 primary_df = pd.concat([phispy_df, virsorter_df]) # primary detections
 metadata_df = pd.read_csv(metadata_table, sep='\t') # bacterial metadata
@@ -185,9 +207,9 @@ primary_df.loc[filt, 'end'] = primary_df.loc[filt, 'contigLEN']
 # sort
 primary_df.sort_values(['contigID', 'contigLEN'], ascending=[False, False], inplace=True)
 primary_df.fillna('None', inplace=True)
-primary_df.to_csv(primary_output, sep='\t', index=False)
 
 
+### union
 # union of detections (collapse overlapping ones) per bacterial contig
 groups = primary_df.groupby('contigID')
 unions, contigIDs = [], []
@@ -206,6 +228,38 @@ for contigID, group in groups:
 union_df = pd.DataFrame({'contigID': contigIDs,
                              'start': new_start,
                              'end': new_end})
-
 union_df = union_df.merge(primary_df, on='contigID', how='left', suffixes=('_union', '_primary'))
-union_df.to_csv(union_output, sep='\t', index=False)
+
+
+### extend
+# extend union of detections
+union_df['start'] = (union_df['start_union'] - PRIMARY_EXTEND)
+union_df['end'] = (union_df['end_union'] + PRIMARY_EXTEND)
+
+filt_start = (union_df['start'] <= 0)
+filt_end = (union_df['end'] >= union_df['contigLEN'])
+
+union_df.loc[filt_start, 'start'] = 1
+union_df.loc[filt_end, 'end'] = union_df['contigLEN']
+union_df.to_csv(primary_output, sep='\t', index=False)
+
+
+                        ###################################
+                        ####### EXTRACT FASTA  ############
+                        ###################################
+
+bacterial_records = list(SeqIO.parse(genbank, 'genbank')) # load bacterial genomes
+union_df.drop_duplicates(subset=['contigID', 'start', 'end'], inplace=True)
+union_df['seq'] = union_df.apply(extract_phages, args=[bacterial_records], axis=1) # extract seq
+
+cols = ['contigID', 'start', 'end', 'tool', 'circular', \
+        'start_union', 'end_union', 'start_primary', 'end_primary', \
+        'contigDESC', 'contigLEN', 'seq']
+
+union_df[cols].to_csv(union_output, sep='\t', index=False) # save table
+
+# convert to fasta
+prophage_records = union_df.apply(get_records, axis=1) # convert to records
+prophage_records = prophage_records.to_list() # convert series2list
+n = SeqIO.write(prophage_records, fasta_output, 'fasta') # save fasta
+print(f'Prophages found & saved (n={n}).')
