@@ -22,6 +22,9 @@ CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
 # intermediate folders
 PROCESS_INPUT_DIR = Path(PROPHAGES_DIR, '0_input')
 PRIMARY_DIR = Path(PROPHAGES_DIR, '1_primary')
+PROPHAGES_DIR = Path(PROPHAGES_DIR, '2_prophages')
+CITIES = Path('scripts', 'cities.tsv')
+USEDIDS = Path('scripts', 'usedIDs.tsv')
 
 
                         #############################################
@@ -55,7 +58,9 @@ rule target:
     input:
         Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),     # run phispy
         Path(PRIMARY_DIR, 'raw', 'virsorter'),      # run virsorter
-        Path(PRIMARY_DIR, '3_union.tsv')            # get collased detections
+        Path(PRIMARY_DIR, '3_union.tsv'),           # get collased detections
+        Path(PROPHAGES_DIR, 'checkv'),              # checkv decontamination
+        Path(PROPHAGES_DIR, 'prophages.tsv')        # prophages
 
 
             #####################################
@@ -114,12 +119,12 @@ rule primary:
         metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv'),
         genbank=Path(BACTERIA_GB)
     output:
-        fasta = Path(PRIMARY_DIR, 'prophages.fasta'),   # fasta prophages
-        union = Path(PRIMARY_DIR, '3_union.tsv'),       # collapsed primary prophages
-        primary =  Path(PRIMARY_DIR, '2_primary.tsv'),  # primary - pretty PhiSpy & VirSorter results
-        phispy = Path(PRIMARY_DIR, '1_phispy.tsv'),     # phispy results
-        virsorter =  Path(PRIMARY_DIR, '1_virsorter.tsv'),          # virsorter results
-        virsorter_raw = Path(PRIMARY_DIR, '0_virsorter_raw.tsv')    # raw virsorter results
+        fasta=Path(PRIMARY_DIR, 'primary_prophages.fasta'),   # fasta prophages
+        union=Path(PRIMARY_DIR, '3_union.tsv'),       # collapsed primary prophages
+        primary= Path(PRIMARY_DIR, '2_primary.tsv'),  # primary - pretty PhiSpy & VirSorter results
+        phispy=Path(PRIMARY_DIR, '1_phispy.tsv'),     # phispy results
+        virsorter= Path(PRIMARY_DIR, '1_virsorter.tsv'),          # virsorter results
+        virsorter_raw=Path(PRIMARY_DIR, '0_virsorter_raw.tsv')    # raw virsorter results
     params: PRIMARY_EXTEND=PRIMARY_EXTEND
     log: Path(PRIMARY_DIR, 'log')
     conda: 'envs/base.yml'
@@ -131,45 +136,24 @@ rule primary:
             ##################################################
 
 # Run checkv - decontaminate prophages
-# rule checkv:
-#     input: Path()
-#     output: directory(Path(checkv))
-#     params:
-#         database="databases/checkv-db-v1.0"
-#     conda: "scripts/checkv.yaml"
-#     shell:
-#         "echo Checkv splits error if there was no phages ...; "
-#         "if checkv end_to_end {input} {output} -d {params.database}; then "
-#         "   echo 'Checkv runned successfuly'; "
-#         "else "
-#         # "   echo 'CheckV didn't perform analysis! Creating empty folder.'"
-#         "   mkdir -p {output}; "
-#         "fi "
+rule checkv:
+    input: Path(PRIMARY_DIR, 'primary_prophages.fasta')
+    output: directory(Path(PROPHAGES_DIR, 'checkv'))
+    params: CHECKV_DB=CHECKV_DB
+    conda: "envs/checkv.yml"
+    threads: workflow.cores * 1.0
+    shell:
+        'checkv end_to_end {input} {output} -d {params.CHECKV_DB} -t {threads}; '
 
-
-
-# rule results:
-#     input: ''
-# cities =
-# checkv =
-#     output: ''
-#     params:
-# EDGE_DISTANCE=EDGE_DISTANCE,
-# CHECKV_TRESHOLD=CHECKV_TRESHOLD
-#     script: "scripts/results.py"
-#
-#
-# rule get_results:
-#     input:
-#         prophages = expand("output/analysis/{genome}/prophages.tsv", genome=config['genomes']),
-#     output:
-#         results_tsv = "output/results/results.tsv",
-#     params:
-#         phage_names = "databases/phage-names.txt",
-#         bacteria_fasta_dir = "output/preprocessing/genomes/fasta/",
-#         phage_metadata = "output/preprocessing/genomes-preproccessing-metadata.txt",
-#         intact = INTACT,
-#         incomplete = INCOMPLETE
-#
-#     script:
-#         "scripts/get_results.py"
+# Get final results
+rule process:
+    input: Path(PROPHAGES_DIR, 'checkv')
+    output:
+        # fasta=Path(PROPHAGES_DIR, 'prophages.fasta'),
+        tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
+    params:
+        CITIES= CITIES,
+        USEDIDS= USEDIDS,
+        CHECKV_TRESHOLD=CHECKV_TRESHOLD # high-confidence prophages
+    conda: 'envs/base.yml'
+    script: 'scripts/prophages.py'
