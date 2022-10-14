@@ -87,7 +87,7 @@ def get_records(row):
     """ Convert dataframe to records. """
 
     contigID, start, end, seq = row['contigID'], row['start'], row['end'], row['seq']
-    record = SeqRecord(seq=Seq(seq), id=f'{contigID}_{start}_{end}')
+    record = SeqRecord(seq=Seq(seq), id=f'{contigID}_{start}_{end}', description=f'primary_prophage_length={len(seq)}')
     return record
 
 
@@ -97,7 +97,7 @@ virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
 metadata_table = Path(snakemake.input.metadata)
 genbank = Path(snakemake.input.genbank)
 
-fasta_output = snakemake.output.fasta, # prophage fasta
+fasta_output = snakemake.output.fasta  # prophage fasta
 union_output = Path(snakemake.output.union)
 primary_output = Path(snakemake.output.primary)
 phispy_output = Path(snakemake.output.phispy)
@@ -105,6 +105,7 @@ virsorter_output = Path(snakemake.output.virsorter)
 virsorter_raw = Path(snakemake.output.virsorter_raw)
 
 PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
+log = Path(str(snakemake.log))
 
 
                         ##############################
@@ -262,4 +263,12 @@ union_df[cols].to_csv(union_output, sep='\t', index=False) # save table
 prophage_records = union_df.apply(get_records, axis=1) # convert to records
 prophage_records = prophage_records.to_list() # convert series2list
 n = SeqIO.write(prophage_records, fasta_output, 'fasta') # save fasta
-print(f'Prophages found & saved (n={n}).')
+
+# get & save log
+log_message = []
+log_message.append(f'Prophages in primary predictions: {primary_df.shape[0]}')
+log_message.append(f'Prophages collapsed (union): {union_df.shape[0]}')
+log_message.append(f'Prophages saved to fasta: {n}.')
+
+with open(log, 'w+') as l:
+    l.write('\n'.join(log_message))

@@ -121,6 +121,7 @@ rule primary:
         virsorter =  Path(PRIMARY_DIR, '1_virsorter.tsv'),          # virsorter results
         virsorter_raw = Path(PRIMARY_DIR, '0_virsorter_raw.tsv')    # raw virsorter results
     params: PRIMARY_EXTEND=PRIMARY_EXTEND
+    log: Path(PRIMARY_DIR, 'log')
     conda: 'envs/base.yml'
     script: 'scripts/primary.py'
 
