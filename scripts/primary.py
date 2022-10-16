@@ -165,7 +165,6 @@ for header in headers:
     # phage within contig
     try:
         localisation = re.search('\d{1,12}-\d{1,12}-cat_[45]', header).group() # localisation
-        print(localisation)
         start, end = localisation.split('-')[:2]
         start = int(start) + 1
 
@@ -248,9 +247,6 @@ for contigID, group in groups:
     for start, end in unions_per_contig:
         new_start.append(start)
         new_end.append(end)
-
-print(len(contigIDs), len(new_start), len(new_end))
-print(contigIDs, new_start, new_end)
 
 union_df = pd.DataFrame({'contigID': contigIDs,
                          'start': new_start,
