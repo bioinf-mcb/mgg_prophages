@@ -62,3 +62,30 @@ Tool detects prophages in bacterial genomes by using two complementary tools: Vi
 
 Prophage circurality is detected only for prophages found as whole contigs and it's evalueated by VirSorter.
 </div> <br>
+
+
+
+
+
+## __DEV info__
+
+
+1 To solve problems with installing env by snakemake (Error: cannot read json file (?) ).
+
+```sh
+conda config --env --add channels bioconda
+conda config --env --add channels conda-forge
+conda config --env --add channels defaults
+conda config --env --set channel_priority true
+```
+<br>
+
+Or set ~/.condarc to contain: <br>
+
+```sh
+channel_priority: true
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+```
