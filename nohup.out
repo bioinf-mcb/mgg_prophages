@@ -1,0 +1,385 @@
+/home/MCB/jkoszucki/.conda/envs/snakemake/lib/python3.10/site-packages/Bio/GenBank/__init__.py:751: BiopythonParserWarning: Non-upper case molecule type in LOCUS line: dna
+  warnings.warn(
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however crucial for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+Using shell: /bin/bash
+Provided cores: 16
+Rules claiming more threads will be scaled down.
+Job stats:
+job          count    min threads    max threads
+---------  -------  -------------  -------------
+checkv           1             16             16
+phispy           1             16             16
+primary          1              1              1
+process          1              1              1
+target           1              1              1
+virsorter        1             16             16
+total            6              1             16
+
+Select jobs to execute...
+
+[Fri Oct 14 17:32:33 2022]
+rule phispy:
+    input: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.gb, /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/pVOGs.hmm
+    output: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv
+    jobid: 1
+    reason: Missing output files: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv
+    threads: 16
+    resources: tmpdir=/tmp
+
+Activating conda environment: .snakemake/conda/cb9c2a928ba4b18d8d3affd1a4b3172d_
+/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/cb9c2a928ba4b18d8d3affd1a4b3172d_/lib/python3.9/site-packages/Bio/GenBank/__init__.py:751: BiopythonParserWarning: Non-upper case molecule type in LOCUS line: dna
+  warnings.warn(
+Processing 120 contigs
+Running HMM profiles against /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/pVOGs.hmm
+hmmsearch: writing the amino acids to temporary file /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy/tmpryyd_mgj
+Searching 26527 proteins with hmmsearch.
+
+Error: File format problem in trying to open HMM file /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/pVOGs.hmm.
+File exists, but appears to be empty?
+
+Completed running HMM profiles against /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/pVOGs.hmm
+Making Testing Set...
+Start Classification Algorithm...
+Using all metrics: orf_length_med, shannon_slope, at_skew, gc_skew, max_direction, phmms.
+Running the random forest classifier with 500 trees and 16 threads
+As the training flag is zero, down-weighting unknown functions
+Evaluating...
+Checking prophages we might have found
+Potential prophages (sorted highest to lowest)
+Contig	Start	Stop	Number of potential genes	Status
+ALBVAVCN.19	4092	41257	48	Kept
+AZOEDSNF.26	16245	36562	30	Kept
+AZOEDSNF.14	37608	71277	26	Kept
+AOVQZBSH.2	685612	726529	25	Kept
+AZOEDSNF.12	944	23546	24	Kept
+ARNUETAI.1	3159590	3208365	23	Kept
+AOVQZBSH.2	407462	452193	23	Kept
+ALBVAVCN.8	43634	80444	22	Kept
+ARNUETAI.1	1812875	1839920	18	Kept
+AJZSYRCA.1	331746	361492	15	Kept
+AZOEDSNF.40	3	11542	13	Kept
+AOVQZBSH.3	179269	201968	11	Kept
+AZOEDSNF.34	1	12430	8	Kept
+AZOEDSNF.4	1276	10380	6	Kept
+AZOEDSNF.16	20	13087	6	Kept
+AZOEDSNF.33	2	1638	5	Dropped. No genes were identified as phage genes
+AZOEDSNF.2	460978	469979	5	Kept
+ARNUETAI.1	1226318	1233561	5	Kept
+AOVQZBSH.3	161764	173892	5	Kept
+AJZSYRCA.17	24485	26121	5	Dropped. No genes were identified as phage genes
+AZOEDSNF.9	156962	167407	3	Dropped. Not enough genes
+AZOEDSNF.1	335010	349801	3	Dropped. Not enough genes
+AOVQZBSH.16	224	1473	3	Dropped. Not enough genes
+ALBVAVCN.9	32404	38079	3	Dropped. Not enough genes
+ALBVAVCN.7	215236	216308	3	Dropped. Not enough genes
+ALBVAVCN.22	24580	25829	3	Dropped. Not enough genes
+AJZSYRCA.4	448376	452572	3	Dropped. Not enough genes
+AZOEDSNF.41	7683	8449	2	Dropped. Not enough genes
+AZOEDSNF.2	36263	38097	2	Dropped. Not enough genes
+ARNUETAI.1	3808357	3810191	2	Dropped. Not enough genes
+ARNUETAI.1	3668820	3677353	2	Dropped. Not enough genes
+ARNUETAI.1	3305026	3312715	2	Dropped. Not enough genes
+ARNUETAI.1	775333	776868	2	Dropped. Not enough genes
+AOVQZBSH.5	394246	399977	2	Dropped. Not enough genes
+AOVQZBSH.1	498456	500290	2	Dropped. Not enough genes
+ALBVAVCN.30	5280	10960	2	Dropped. Not enough genes
+ALBVAVCN.3	513019	514853	2	Dropped. Not enough genes
+ALBVAVCN.29	7339	12597	2	Dropped. Not enough genes
+AJZSYRCA.3	525388	527222	2	Dropped. Not enough genes
+AZOEDSNF.7	150660	151877	1	Dropped. Not enough genes
+AZOEDSNF.7	37476	37868	1	Dropped. Not enough genes
+AZOEDSNF.5	216923	217387	1	Dropped. Not enough genes
+AZOEDSNF.4	15019	16200	1	Dropped. Not enough genes
+AZOEDSNF.24	31611	32507	1	Dropped. Not enough genes
+AZOEDSNF.21	37147	38049	1	Dropped. Not enough genes
+AZOEDSNF.2	162946	164157	1	Dropped. Not enough genes
+AZOEDSNF.2	3149	3451	1	Dropped. Not enough genes
+AZOEDSNF.18	94354	94602	1	Dropped. Not enough genes
+AZOEDSNF.11	54648	55046	1	Dropped. Not enough genes
+AZOEDSNF.10	124195	125484	1	Dropped. Not enough genes
+AZOEDSNF.10	73618	74025	1	Dropped. Not enough genes
+AZOEDSNF.10	31195	32151	1	Dropped. Not enough genes
+AZOEDSNF.1	750909	752957	1	Dropped. Not enough genes
+AZOEDSNF.1	700545	701456	1	Dropped. Not enough genes
+AZOEDSNF.1	653064	654488	1	Dropped. Not enough genes
+AZOEDSNF.1	90010	90579	1	Dropped. Not enough genes
+AZOEDSNF.1	80434	81690	1	Dropped. Not enough genes
+ARNUETAI.1	5140643	5141545	1	Dropped. Not enough genes
+ARNUETAI.1	5021375	5022664	1	Dropped. Not enough genes
+ARNUETAI.1	4972829	4973236	1	Dropped. Not enough genes
+ARNUETAI.1	4930540	4931496	1	Dropped. Not enough genes
+ARNUETAI.1	4729460	4730707	1	Dropped. Not enough genes
+ARNUETAI.1	4263622	4264086	1	Dropped. Not enough genes
+ARNUETAI.1	4240149	4241330	1	Dropped. Not enough genes
+ARNUETAI.1	3948749	3949111	1	Dropped. Not enough genes
+ARNUETAI.1	3844372	3844674	1	Dropped. Not enough genes
+ARNUETAI.1	3687242	3689056	1	Dropped. Not enough genes
+ARNUETAI.1	3651031	3652242	1	Dropped. Not enough genes
+ARNUETAI.1	3348856	3350175	1	Dropped. Not enough genes
+ARNUETAI.1	2843752	2844144	1	Dropped. Not enough genes
+ARNUETAI.1	2741887	2743104	1	Dropped. Not enough genes
+ARNUETAI.1	1936664	1938712	1	Dropped. Not enough genes
+ARNUETAI.1	863761	864657	1	Dropped. Not enough genes
+ARNUETAI.1	605109	605507	1	Dropped. Not enough genes
+AOVQZBSH.8	139818	140216	1	Dropped. Not enough genes
+AOVQZBSH.6	331392	332681	1	Dropped. Not enough genes
+AOVQZBSH.6	282840	283247	1	Dropped. Not enough genes
+AOVQZBSH.6	242282	243238	1	Dropped. Not enough genes
+AOVQZBSH.5	31273	32169	1	Dropped. Not enough genes
+AOVQZBSH.3	475242	476459	1	Dropped. Not enough genes
+AOVQZBSH.3	376406	376798	1	Dropped. Not enough genes
+AOVQZBSH.2	86368	88416	1	Dropped. Not enough genes
+AOVQZBSH.13	36997	37899	1	Dropped. Not enough genes
+AOVQZBSH.11	59286	59843	1	Dropped. Not enough genes
+AOVQZBSH.1	911524	912057	1	Dropped. Not enough genes
+AOVQZBSH.1	642595	642957	1	Dropped. Not enough genes
+AOVQZBSH.1	533020	533322	1	Dropped. Not enough genes
+AOVQZBSH.1	374933	376144	1	Dropped. Not enough genes
+ALBVAVCN.6	139705	140103	1	Dropped. Not enough genes
+ALBVAVCN.4	426198	427094	1	Dropped. Not enough genes
+ALBVAVCN.3	659119	659481	1	Dropped. Not enough genes
+ALBVAVCN.3	547582	547884	1	Dropped. Not enough genes
+ALBVAVCN.3	380552	381763	1	Dropped. Not enough genes
+ALBVAVCN.27	18304	18900	1	Dropped. Not enough genes
+ALBVAVCN.2	240213	241271	1	Dropped. Not enough genes
+ALBVAVCN.2	86345	88393	1	Dropped. Not enough genes
+ALBVAVCN.16	37009	37911	1	Dropped. Not enough genes
+ALBVAVCN.11	121453	122409	1	Dropped. Not enough genes
+ALBVAVCN.11	80040	80447	1	Dropped. Not enough genes
+ALBVAVCN.11	30604	31893	1	Dropped. Not enough genes
+ALBVAVCN.1	809691	810083	1	Dropped. Not enough genes
+ALBVAVCN.1	707355	708455	1	Dropped. Not enough genes
+AJZSYRCA.8	150386	150784	1	Dropped. Not enough genes
+AJZSYRCA.7	128077	129033	1	Dropped. Not enough genes
+AJZSYRCA.7	85852	86259	1	Dropped. Not enough genes
+AJZSYRCA.7	34377	35666	1	Dropped. Not enough genes
+AJZSYRCA.4	31361	32257	1	Dropped. Not enough genes
+AJZSYRCA.3	398858	400069	1	Dropped. Not enough genes
+AJZSYRCA.2	416879	418162	1	Dropped. Not enough genes
+AJZSYRCA.13	48297	49199	1	Dropped. Not enough genes
+AJZSYRCA.1	1449045	1449209	1	Dropped. Not enough genes
+AJZSYRCA.1	1085064	1085456	1	Dropped. Not enough genes
+AJZSYRCA.1	970970	972187	1	Dropped. Not enough genes
+AJZSYRCA.1	389473	390645	1	Dropped. Not enough genes
+AJZSYRCA.1	369411	372524	1	Dropped. Not enough genes
+AJZSYRCA.1	91069	93117	1	Dropped. Not enough genes
+PROPHAGE: 1 Contig: AJZSYRCA.1 Start: 331746 Stop: 361492
+PROPHAGE: 2 Contig: ALBVAVCN.8 Start: 43634 Stop: 80444
+PROPHAGE: 3 Contig: ALBVAVCN.19 Start: 4092 Stop: 41257
+There were 4 repeats with the same length as the best. One chosen somewhat randomly!
+PROPHAGE: 4 Contig: AOVQZBSH.2 Start: 407462 Stop: 452193
+PROPHAGE: 5 Contig: AOVQZBSH.2 Start: 685612 Stop: 726529
+PROPHAGE: 6 Contig: AOVQZBSH.3 Start: 161764 Stop: 173892
+There were 2 repeats with the same length as the best. One chosen somewhat randomly!
+PROPHAGE: 7 Contig: AOVQZBSH.3 Start: 179269 Stop: 201968
+There were 2 repeats with the same length as the best. One chosen somewhat randomly!
+PROPHAGE: 8 Contig: ARNUETAI.1 Start: 1226318 Stop: 1233561
+PROPHAGE: 9 Contig: ARNUETAI.1 Start: 1812875 Stop: 1839920
+There were 5 repeats with the same length as the best. One chosen somewhat randomly!
+PROPHAGE: 10 Contig: ARNUETAI.1 Start: 3159590 Stop: 3208365
+There were 5 repeats with the same length as the best. One chosen somewhat randomly!
+PROPHAGE: 11 Contig: AZOEDSNF.2 Start: 460978 Stop: 469979
+PROPHAGE: 12 Contig: AZOEDSNF.4 Start: 1276 Stop: 10380
+There were 4 repeats with the same length as the best. One chosen somewhat randomly!
+PROPHAGE: 13 Contig: AZOEDSNF.12 Start: 944 Stop: 23546
+PROPHAGE: 14 Contig: AZOEDSNF.14 Start: 37608 Stop: 71277
+PROPHAGE: 15 Contig: AZOEDSNF.16 Start: 20 Stop: 13087
+PROPHAGE: 16 Contig: AZOEDSNF.26 Start: 16245 Stop: 36562
+PROPHAGE: 17 Contig: AZOEDSNF.34 Start: 1 Stop: 12430
+PROPHAGE: 18 Contig: AZOEDSNF.40 Start: 3 Stop: 11542
+Creating output files
+Writing GenBank output file
+Writing prophage_coordinates output file
+Done!!! Output is in /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy and the log is in /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy/phispy.log
+[Fri Oct 14 17:33:35 2022]
+Finished job 1.
+1 of 6 steps (17%) done
+Select jobs to execute...
+
+[Fri Oct 14 17:33:35 2022]
+rule virsorter:
+    input: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.fasta, /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/wrapper_phage_contigs_sorter_iPlant.pl, /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2
+    output: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter
+    jobid: 2
+    reason: Missing output files: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter
+    threads: 16
+    resources: tmpdir=/tmp
+
+Activating conda environment: .snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_
+Reading '/home/MCB/jkoszucki/.cpan/Metadata'
+  Database was generated on Fri, 14 Oct 2022 07:53:59 GMT
+File::Which is up to date (1.27).
+This VirSorter run uses `diamond` (Buchfink et al., Nature Methods 2015) instead of `blastp`.
+
+Bin            : /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter
+Dataset        : VIRSorter
+Input file     : /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.fasta
+Db             : 1
+Working dir    : /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter
+Custom phages  : 
+Data dir       : /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2
+Num CPUs       : 16
+blastp         : diamond
+
+Started at Fri Oct 14 17:33:39 2022
+Step 0.5 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_1_contigs_cleaning_and_gene_prediction.pl VIRSorter /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/input_sequences.fna 2 >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Started at Fri Oct 14 17:35:00 2022
+Step 0.8 : /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_/bin/hmmsearch --tblout /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMa.tab --cpu 16 -o /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMa.out --noali /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2/PFAM_27/Pfam-A.hmm /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Started at Fri Oct 14 17:50:19 2022
+Step 0.9 : /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_/bin/hmmsearch --tblout /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMb.tab --cpu 16 -o /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMb.out --noali /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2/PFAM_27/Pfam-B.hmm /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+### Revision 0
+Started at Fri Oct 14 18:15:08 2022
+Out : 
+
+Started at Fri Oct 14 18:15:16 2022
+Step 1.2 : /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_/bin/hmmsearch --tblout /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/Contigs_prots_vs_New_clusters.tab --cpu 16 -o /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/Contigs_prots_vs_New_clusters.out --noali /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/db/Pool_clusters.hmm /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+	
+
+Started at Fri Oct 14 18:25:08 2022
+
+Step 1.3 : /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_/bin/diamond blastp --query /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta --db /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/db/Pool_new_unclustered --out /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/Contigs_prots_vs_New_unclustered.tab --threads 16 --outfmt 6 -b 1 --more-sensitive -k 500 --evalue 0.001 >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+	
+Started at Fri Oct 14 18:25:12 2022
+Step 2 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_2_merge_contigs_annotation.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_mga_final.predict /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_Phage_Gene_Catalog.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_Phage_Gene_unclustered.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMa.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMb.tab /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2/Phage_gene_catalog/Phage_Clusters_current.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Started at Fri Oct 14 18:25:14 2022
+Step 3 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_3_highlight_phage_signal.pl -csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv -out /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_phage-signal.csv -n_cpu 16 -no_c 0 >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Setting up the final result file
+Started at Fri Oct 14 18:25:19 2022
+Step 4 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_4_summarize_phage_signal.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_phage-signal.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_global-phage-signal.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_new_prot_list.csv >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+### Revision 1
+Started at Fri Oct 14 18:25:19 2022
+Out : 
+perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_0_make_new_clusters.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_1 /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/db/Pool_unclustered.faa /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_new_prot_list.csv 16 diamond >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+
+Step 1.1 new clusters and new database : 
+There are no clusters in the database, so skip the hmmsearch
+
+Started at Fri Oct 14 18:25:24 2022
+
+Step 1.3 : /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_/bin/diamond blastp --query /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta --db /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_1/db/Pool_new_unclustered --out /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_1/Contigs_prots_vs_New_unclustered.tab --threads 16 --outfmt 6 -b 1 --more-sensitive -k 500 --evalue 0.001 >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+	
+Started at Fri Oct 14 18:25:27 2022
+Step 2 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_2_merge_contigs_annotation.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_mga_final.predict /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_Phage_Gene_Catalog.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_Phage_Gene_unclustered.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMa.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMb.tab /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2/Phage_gene_catalog/Phage_Clusters_current.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Started at Fri Oct 14 18:25:28 2022
+Step 3 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_3_highlight_phage_signal.pl -csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv -out /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_phage-signal.csv -n_cpu 16 -no_c 0 -ref /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.refs >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Setting up the final result file
+Started at Fri Oct 14 18:25:33 2022
+Step 4 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_4_summarize_phage_signal.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_phage-signal.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_global-phage-signal.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_new_prot_list.csv >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+### Revision 2
+Started at Fri Oct 14 18:25:33 2022
+Out : 
+perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_0_make_new_clusters.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_2 /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_1/db/Pool_unclustered.faa /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_new_prot_list.csv 16 diamond >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+
+Step 1.1 new clusters and new database : 
+There are no clusters in the database, so skip the hmmsearch
+
+Started at Fri Oct 14 18:25:37 2022
+
+Step 1.3 : /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/eec76b4bc22dc327b0dc838b9ecdd7ff_/bin/diamond blastp --query /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_prots.fasta --db /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_2/db/Pool_new_unclustered --out /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_2/Contigs_prots_vs_New_unclustered.tab --threads 16 --outfmt 6 -b 1 --more-sensitive -k 500 --evalue 0.001 >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+	
+Started at Fri Oct 14 18:25:40 2022
+Step 2 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_2_merge_contigs_annotation.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/fasta/VIRSorter_mga_final.predict /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_Phage_Gene_Catalog.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_Phage_Gene_unclustered.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMa.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/Contigs_prots_vs_PFAMb.tab /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/virsorterDB_v2/Phage_gene_catalog/Phage_Clusters_current.tab /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Started at Fri Oct 14 18:25:42 2022
+Step 3 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_3_highlight_phage_signal.pl -csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv -out /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_phage-signal.csv -n_cpu 16 -no_c 0 -ref /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.refs >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+Setting up the final result file
+Started at Fri Oct 14 18:25:47 2022
+Step 4 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_4_summarize_phage_signal.pl /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_affi-contigs.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_phage-signal.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_global-phage-signal.csv /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/VIRSorter_new_prot_list.csv >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+
+Started at Fri Oct 14 18:25:47 2022
+
+Step 5 : perl /home/MCB/jkoszucki/phagedb/MGG_DATABASE_SETUP/virsorter_tool/VirSorter/Scripts/Step_5_get_phage_fasta-gb.pl VIRSorter /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter >> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/out 2>> /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/logs/err
+	
+## Verify if this should have been a virome decontamination mode based on 10kb+ contigs
+## -> No, this looks fine
+Cleaning the output directory
+rm -r /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter/r_0/db : 
+[Fri Oct 14 18:25:49 2022]
+Finished job 2.
+2 of 6 steps (33%) done
+Select jobs to execute...
+
+[Fri Oct 14 18:25:49 2022]
+rule primary:
+    input: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.gb
+    output: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/primary_prophages.fasta, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/3_union.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/2_primary.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/1_phispy.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/1_virsorter.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/0_virsorter_raw.tsv
+    log: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/log
+    jobid: 3
+    reason: Missing output files: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/primary_prophages.fasta, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/3_union.tsv; Input files updated by another job: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter
+    resources: tmpdir=/tmp
+
+Activating conda environment: .snakemake/conda/aca0406753d5b5161de35d590010801d_
+Activating conda environment: .snakemake/conda/aca0406753d5b5161de35d590010801d_
+3649201-3689106-cat_5
+2129993-2165132-cat_5
+3158054-3209170-cat_5
+674906-784598-cat_5
+3304976-3398516-cat_5
+4624047-4730757-cat_5
+958627-992859-cat_5
+100964-134938-cat_5
+405705-451062-cat_5
+416119-451221-cat_5
+460928-470826-cat_5
+0-16250-cat_5
+0-23303-cat_5
+16195-36563-cat_5
+0-13583-cat_5
+1812825-1858296-cat_4
+297253-391226-cat_4
+685562-726579-cat_4
+161744-215732-cat_4
+43584-80494-cat_4
+37558-72342-cat_4
+Traceback (most recent call last):
+  File "/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/scripts/tmp0uvks9z1.primary.py", line 233, in <module>
+    union_df = pd.DataFrame({'contigID': contigIDs,
+  File "/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/aca0406753d5b5161de35d590010801d_/lib/python3.10/site-packages/pandas/core/frame.py", line 663, in __init__
+    mgr = dict_to_mgr(data, index, columns, dtype=dtype, copy=copy, typ=manager)
+  File "/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/aca0406753d5b5161de35d590010801d_/lib/python3.10/site-packages/pandas/core/internals/construction.py", line 494, in dict_to_mgr
+    return arrays_to_mgr(arrays, columns, index, dtype=dtype, typ=typ, consolidate=copy)
+  File "/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/aca0406753d5b5161de35d590010801d_/lib/python3.10/site-packages/pandas/core/internals/construction.py", line 119, in arrays_to_mgr
+    index = _extract_index(arrays)
+  File "/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/aca0406753d5b5161de35d590010801d_/lib/python3.10/site-packages/pandas/core/internals/construction.py", line 667, in _extract_index
+    raise ValueError("All arrays must be of the same length")
+ValueError: All arrays must be of the same length
+[Fri Oct 14 18:25:51 2022]
+Error in rule primary:
+    jobid: 3
+    output: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/primary_prophages.fasta, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/3_union.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/2_primary.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/1_phispy.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/1_virsorter.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/0_virsorter_raw.tsv
+    log: /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/log (check log file(s) for error message)
+    conda-env: /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/aca0406753d5b5161de35d590010801d_
+
+RuleException:
+CalledProcessErrorin line 131 of /home/MCB/jkoszucki/Code/mgg_prophages/PROPHAGES:
+Command 'source /home/MCB/jkoszucki/.conda/envs/snakemake/bin/activate '/home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/conda/aca0406753d5b5161de35d590010801d_'; set -euo pipefail;  python /home/MCB/jkoszucki/Code/mgg_prophages/.snakemake/scripts/tmp0uvks9z1.primary.py' returned non-zero exit status 1.
+  File "/home/MCB/jkoszucki/Code/mgg_prophages/PROPHAGES", line 131, in __rule_primary
+  File "/home/MCB/jkoszucki/.conda/envs/snakemake/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Removing output files of failed job primary since they might be corrupted:
+/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/1_phispy.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/1_virsorter.tsv, /home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/0_virsorter_raw.tsv
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2022-10-14T173224.523086.snakemake.log
+[92m---------------------    PROPHAGE DETECTION   ---------------------[0m
+[92m---------------------------    START   -----------------------
+[0m
+[93mpVOGs DOWNLOAD DO NOT WORK![0m
+Preprocessing... [92mDone![0m
+Check dependiencies... [92mDone! [0m
+

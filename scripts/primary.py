@@ -97,7 +97,7 @@ virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
 metadata_table = Path(snakemake.input.metadata)
 genbank = Path(snakemake.input.genbank)
 
-fasta_output = snakemake.output.fasta  # prophage fasta
+fasta_output = snakemake.output.fasta  # prophages fasta
 union_output = Path(snakemake.output.union)
 primary_output = Path(snakemake.output.primary)
 phispy_output = Path(snakemake.output.phispy)
@@ -106,6 +106,24 @@ virsorter_raw = Path(snakemake.output.virsorter_raw)
 
 PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
 log = Path(str(snakemake.log))
+
+#
+# #### testing
+# phispy_table = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv')
+# virsorter_dir = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter', 'Predicted_viral_sequences')
+# metadata_table = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.tsv')
+# genbank = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.gb')
+#
+# fasta_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/prophages.fasta')  # prophages fasta
+# union_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/union.tsv')
+# primary_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/primary.tsv')
+# phispy_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/phispy.tsv')
+# virsorter_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/virsorter.tsv')
+# virsorter_raw = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/virsorter_raw.tsv')
+#
+# PRIMARY_EXTEND = 2000
+# log = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/log')
+
 
 
                         ##############################
@@ -120,7 +138,6 @@ phispy_df.columns = ['contigID', 'start', 'end']
 phispy_df['contigID'] = phispy_df.apply(lambda row: row['contigID'].replace('.', '_'), axis=1) # curate dot in IDs :D irony
 phispy_df['tool'] = 'phispy'
 phispy_df.to_csv(phispy_output, sep='\t', index=False)
-
 
                         #################################
                         ####### PROCESS VIRSORTER #######
@@ -140,6 +157,7 @@ for fasta in virsorter_fasta:
 with open(virsorter_raw, 'w+') as f:
     f.write('\n'.join(headers) + '\n')
 
+
 ### extract localisation & contigID
 contigIDs, starts, ends, circurality = [], [], [], []
 for header in headers:
@@ -148,6 +166,7 @@ for header in headers:
         localisation = re.search('\d{1,12}-\d{1,12}-cat_[45]', header).group() # localisation
         print(localisation)
         start, end = localisation.split('-')[:2]
+        start = int(start) + 1
 
         contigID = re.search('VIRSorter_.*_gene', header).group() # contigID
         contigID = contigID.strip('VIRSorter_')
@@ -175,6 +194,7 @@ for header in headers:
     starts.append(start)
     ends.append(end)
     circurality.append(circular)
+
 # virsorter table
 virsorter_df = pd.DataFrame({'contigID': contigIDs,
                              'start': starts,
@@ -208,7 +228,7 @@ primary_df.loc[filt, 'end'] = primary_df.loc[filt, 'contigLEN']
 # sort
 primary_df.sort_values(['contigID', 'contigLEN'], ascending=[False, False], inplace=True)
 primary_df.fillna('None', inplace=True)
-
+primary_df.to_csv(primary_output, sep='\t', index=False)
 
 ### union
 # union of detections (collapse overlapping ones) per bacterial contig
@@ -221,14 +241,19 @@ for contigID, group in groups:
 
     unions_per_contig = collapse_overlapping(locations)
 
-    contigIDs.append(contigID)
+    for i in range(len(unions_per_contig)):
+        contigIDs.append(contigID)
+
     for start, end in unions_per_contig:
         new_start.append(start)
         new_end.append(end)
 
+print(len(contigIDs), len(new_start), len(new_end))
+print(contigIDs, new_start, new_end)
+
 union_df = pd.DataFrame({'contigID': contigIDs,
-                             'start': new_start,
-                             'end': new_end})
+                         'start': new_start,
+                         'end': new_end})
 union_df = union_df.merge(primary_df, on='contigID', how='left', suffixes=('_union', '_primary'))
 
 
@@ -271,4 +296,4 @@ log_message.append(f'Prophages collapsed (union): {union_df.shape[0]}')
 log_message.append(f'Prophages saved to fasta: {n}.')
 
 with open(log, 'w+') as l:
-    l.write('\n'.join(log_message))
+    l.write('\n'.join(log_message) + '\n')

@@ -4,3 +4,4 @@ tmp
 scripts/__pycache__
 scripts/.DS_Store
 PROPHAGES_*
+nohup
