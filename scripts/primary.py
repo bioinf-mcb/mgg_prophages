@@ -107,7 +107,7 @@ virsorter_raw = Path(snakemake.output.virsorter_raw)
 PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
 log = Path(str(snakemake.log))
 
-#
+
 # #### testing
 # phispy_table = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv')
 # virsorter_dir = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter', 'Predicted_viral_sequences')
@@ -123,6 +123,7 @@ log = Path(str(snakemake.log))
 #
 # PRIMARY_EXTEND = 2000
 # log = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/log')
+
 
 
 
