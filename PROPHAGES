@@ -39,7 +39,7 @@ CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
 # intermediate folders
 PROCESS_INPUT_DIR = Path(PROPHAGES_DIR, '0_input')
 PRIMARY_DIR = Path(PROPHAGES_DIR, '1_primary')
-PROPHAGES_DIR = Path(PROPHAGES_DIR, '2_prophages')
+CHECKV_DIR = Path(PROPHAGES_DIR, '2_checkv')
 CITIES = Path('scripts', 'cities.tsv')
 USEDIDS = Path('scripts', 'usedIDs.tsv')
 
@@ -76,7 +76,7 @@ rule target:
         Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),       # run phispy
         Path(PRIMARY_DIR, 'raw', 'virsorter'),        # run virsorter
         Path(PRIMARY_DIR, 'union_prophages.fasta'),   # get collased detections
-        Path(PROPHAGES_DIR, 'checkv'),                # checkv decontamination
+        Path(CHECKV_DIR),                             # checkv decontamination
         Path(PROPHAGES_DIR, 'prophages.tsv')          # prophages
 
 
@@ -154,7 +154,7 @@ rule primary:
 # Run checkv - decontaminate prophages
 rule checkv:
     input: Path(PRIMARY_DIR, 'union_prophages.fasta')
-    output: directory(Path(PROPHAGES_DIR, 'checkv'))
+    output: directory(Path(CHECKV_DIR))
     params: CHECKV_DB=CHECKV_DB
     conda: "envs/checkv.yml"
     threads: workflow.cores * 1.0
@@ -165,7 +165,7 @@ rule checkv:
 # Get final results
 rule process:
     input:
-        checkv_dir=Path(PROPHAGES_DIR, 'checkv'),
+        checkv_dir=Path(CHECKV_DIR),
         union_prophages=Path(PRIMARY_DIR, 'union_prophages.fasta')
     output:
         fasta=Path(PROPHAGES_DIR, 'prophages.fasta'),
