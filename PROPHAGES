@@ -1,7 +1,7 @@
 """
-Scalable prophage detection meta-tool
+Automatic & scalable prophage detection meta-tool
 Exploits two tools for prophage detection (VirSorter & Phispy)
-and performs decontamination with bacterial DNA (CheckV).
+and performs decontamination of bacterial DNA (CheckV).
 
 Primary detections are collapsed (union of detections) and analyzed by CheckV.
 Based on assigned completeness and confidence prophages can be filtered,
@@ -52,7 +52,6 @@ USEDIDS = Path('scripts', 'usedIDs.tsv')
 
 print(f"{bcolors.OKGREEN}---------------------    PROPHAGE DETECTION   ---------------------{bcolors.ENDC}")
 print(f"{bcolors.OKGREEN}---------------------------    START   -----------------------\n{bcolors.ENDC}")
-print(f"{bcolors.WARNING}pVOGs DOWNLOAD DO NOT WORK!{bcolors.ENDC}")
 
 # curate & annotate (via PATRIC) bacterial genomes
 print(f"Preprocessing... ", end='')
