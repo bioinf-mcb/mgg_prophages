@@ -1,7 +1,13 @@
 # __MGG prophages__
 
 <div align="justify">
-MGG snakemake workflow for confident prophage detection in annotated bacterial genomes.
+Automatic & scalable prophage detection meta-tool.
+Exploits two tools for prophage detection (VirSorter & Phispy)
+and performs decontamination of bacterial DNA (CheckV).
+
+Primary detections are collapsed (union of detections) and analyzed by CheckV.
+Based on assigned completeness and confidence prophages can be filtered,
+accordingly to subsequent analyses.
 </div> <br>
 
 ## __Steps__ (Linux)
@@ -16,62 +22,31 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 ### Run prophage detection
 
 <div align="justify">
-To run workflow customize config file (config.yml), download dependencies (SetupTools) and execute workflow (PROPHAGES). Make sure that bacterial and protein ids are unique! Avoid white characters in bacterial contig ids!
-</div> <br>
-
-
-**1. Customize config file (config.yml)**
-
-1. Directory to download and install dependencies (SETUP_TOOLS_DIR).
-2. File with annotated bacterial genome(s) (recommended: via PATRIC server) (GENBANK_FILE). <br><br>
-
-**2. Download dependencies (SetupTools)**
-
-<div align="justify">
-To setup dependencies run command below. If you already did that it is enough to point in config file (SETUP_TOOLS_DIR) to directory with dependencies.
-</div> <br>
+To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file (BV-BRC recommended) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br>
 
 ```sh
-snakemake --use-conda --cores all --snakefile SetupTools
+snakemake --use-conda --cores all --snakefile SetupTools # setup dependencies
+snakemake --use-conda --cores all --snakefile PROPHAGES # execute workflow
 ```
-<br>
 
-**3. Run test (optional)**
 
-<div align="justify">
-After setting up dependencies (point 2) run prophage detection with default config file paths.
 </div> <br>
-
-```sh
-snakemake --use-conda --cores all --snakefile PROPHAGES
-```
-<br>
-
-**4. Execute prophage detection**
-
-```sh
-snakemake --use-conda --cores all --snakefile PROPHAGES
-```
-<br>
+** comment: Make sure that bacterial and protein ids are unique and avoid white characters in bacterial contig ids. **
 
 
 ## Results
 
 <div align="justify">
-Sequences and metadata of prophages and prophage-like elements can be found in prophages.fasta and prophages.tsv, respectively.
-To obtain high-confidence prophages one should consider phages full-filling criteria of completeness above 90% and at least medium confidence.
+Sequences and metadata of prophages and prophage-like elements are final output of the workflow ("prophages" files).
+To obtain high-confidence prophages one should consider prophages full-filling criteria of completeness at least:  >= 90% and >= medium confidence.
 </div> <br>
 
 
 ## __Details__ (preliminary)
 
 <div align="justify">
-Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are decontaminated from bacterial DNA and their completeness is estimated (CheckV). Based, on completeness prophages are filtered to obtain only high-confidence prophages.
-
-Prophage circurality is detected only for prophages found as whole contigs and it's evalueated by VirSorter.
+Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are collapsed (union) decontaminated from bacterial DNA and their completeness (with confidence) is estimated (CheckV).
 </div> <br>
-
-
 
 
 
