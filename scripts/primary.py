@@ -75,8 +75,8 @@ def extract_phages(row, records):
     contigID, start, end = row['contigID'], row['start'], row['end']
 
     for record in records:
-        if record.id == contigID:
-            break
+        print(record.id, contigID, start, end)
+        if record.id == contigID: break
 
     seq = Seq(record.seq[start:end+1])
 
@@ -102,7 +102,6 @@ union_output = Path(snakemake.output.union)
 primary_output = Path(snakemake.output.primary)
 phispy_output = Path(snakemake.output.phispy)
 virsorter_output = Path(snakemake.output.virsorter)
-virsorter_raw = Path(snakemake.output.virsorter_raw)
 
 PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
 log = Path(str(snakemake.log))
@@ -138,6 +137,7 @@ phispy_df.columns = ['contigID', 'start', 'end']
 
 phispy_df['contigID'] = phispy_df.apply(lambda row: row['contigID'].replace('.', '_'), axis=1) # curate dot in IDs :D irony
 phispy_df['tool'] = 'phispy'
+phispy_df.sort_values('start', ascending=True, inplace=True)
 phispy_df.to_csv(phispy_output, sep='\t', index=False)
 
                         #################################
@@ -153,10 +153,6 @@ for fasta in virsorter_fasta:
     records = SeqIO.parse(fasta, 'fasta')
     for record in records:
         headers.append(record.id) # extract headers
-
-# save raw headers
-with open(virsorter_raw, 'w+') as f:
-    f.write('\n'.join(headers) + '\n')
 
 
 ### extract localisation & contigID
@@ -199,9 +195,11 @@ for header in headers:
 virsorter_df = pd.DataFrame({'contigID': contigIDs,
                              'start': starts,
                              'end': ends,
-                             'circular': circurality})
+                             'circular': circurality,
+                             'header': headers})
 
 virsorter_df['tool'] = 'virsorter'
+virsorter_df.sort_values('start', ascending=True, inplace=True)
 virsorter_df.to_csv(virsorter_output, sep='\t', index=False)
 
 
@@ -225,8 +223,8 @@ primary_df = primary_df.merge(metadata_df, on='contigID', how='left')
 filt = (primary_df['end'] == 'contig_len')
 primary_df.loc[filt, 'end'] = primary_df.loc[filt, 'contigLEN']
 
-# sort
-primary_df.sort_values(['contigID', 'contigLEN'], ascending=[False, False], inplace=True)
+# sort & save primary detections
+primary_df.sort_values(['contigLEN', 'start'], ascending=[False, True], inplace=True)
 primary_df.fillna('None', inplace=True)
 primary_df.to_csv(primary_output, sep='\t', index=False)
 
@@ -241,17 +239,17 @@ for contigID, group in groups:
 
     unions_per_contig = collapse_overlapping(locations)
 
-    for i in range(len(unions_per_contig)):
-        contigIDs.append(contigID)
-
     for start, end in unions_per_contig:
+        contigIDs.append(contigID)
         new_start.append(start)
         new_end.append(end)
 
 union_df = pd.DataFrame({'contigID': contigIDs,
-                         'start': new_start,
-                         'end': new_end})
-union_df = union_df.merge(primary_df, on='contigID', how='left', suffixes=('_union', '_primary'))
+                         'start_union': new_start,
+                         'end_union': new_end})
+
+union_df = union_df.merge(metadata_df, on='contigID', how='left')
+# union_df = union_df.merge(primary_df, on='contigID', how='left', suffixes=('_union', '_primary'))
 
 
 ### extend
@@ -264,7 +262,8 @@ filt_end = (union_df['end'] >= union_df['contigLEN'])
 
 union_df.loc[filt_start, 'start'] = 1
 union_df.loc[filt_end, 'end'] = union_df['contigLEN']
-union_df.to_csv(primary_output, sep='\t', index=False)
+
+# union_df.to_csv(primary_output, sep='\t', index=False) # overwrite primary (nicer primary table)
 
 
                         ###################################
@@ -275,10 +274,10 @@ bacterial_records = list(SeqIO.parse(genbank, 'genbank')) # load bacterial genom
 union_df.drop_duplicates(subset=['contigID', 'start', 'end'], inplace=True)
 union_df['seq'] = union_df.apply(extract_phages, args=[bacterial_records], axis=1) # extract seq
 
-cols = ['contigID', 'start', 'end', 'tool', 'circular', \
-        'start_union', 'end_union', 'start_primary', 'end_primary', \
+cols = ['contigID', 'start', 'end', 'start_union', 'end_union', \
         'contigDESC', 'contigLEN', 'seq']
 
+union_df.sort_values(['contigLEN', 'start'], ascending=[False, True], inplace=True)
 union_df[cols].to_csv(union_output, sep='\t', index=False) # save table
 
 # convert to fasta

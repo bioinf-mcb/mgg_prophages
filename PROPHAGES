@@ -10,6 +10,7 @@ OUTPUT_DIR = config['OUTPUT_DIR']
 
 VERSION = datetime.now().strftime('%Y-%m-%d')
 VERSION = '2022-10-14'  #### HARDCODED FOR TESTING ####
+print(f'{bcolors.WARNING}VERSION {VERSION} HARDCODED FOR TESTING!{bcolors.ENDC}')
 
 PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
 PRIMARY_EXTEND = config['PRIMARY_EXTEND']
@@ -60,9 +61,9 @@ rule target:
     input:
         Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),     # run phispy
         Path(PRIMARY_DIR, 'raw', 'virsorter'),      # run virsorter
-        Path(PRIMARY_DIR, '3_union.tsv'),           # get collased detections
-        Path(PROPHAGES_DIR, 'checkv'),              # checkv decontamination
-        Path(PROPHAGES_DIR, 'prophages.tsv')        # prophages
+        Path(PRIMARY_DIR, 'union_prophages.fasta'), # get collased detections
+        Path(PROPHAGES_DIR, 'checkv')              # checkv decontamination
+        # Path(PROPHAGES_DIR, 'prophages.tsv')        # prophages
 
 
             #####################################
@@ -121,12 +122,11 @@ rule primary:
         metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv'),
         genbank=Path(BACTERIA_GB)
     output:
-        fasta=Path(PRIMARY_DIR, 'primary_prophages.fasta'),   # fasta prophages
+        fasta=Path(PRIMARY_DIR, 'union_prophages.fasta'),   # fasta prophages
         union=Path(PRIMARY_DIR, '3_union.tsv'),       # collapsed primary prophages
         primary= Path(PRIMARY_DIR, '2_primary.tsv'),  # primary - pretty PhiSpy & VirSorter results
         phispy=Path(PRIMARY_DIR, '1_phispy.tsv'),     # phispy results
-        virsorter= Path(PRIMARY_DIR, '1_virsorter.tsv'),          # virsorter results
-        virsorter_raw=Path(PRIMARY_DIR, '0_virsorter_raw.tsv')    # raw virsorter results
+        virsorter= Path(PRIMARY_DIR, '1_virsorter.tsv')          # virsorter results
     params: PRIMARY_EXTEND=PRIMARY_EXTEND
     log: Path(PRIMARY_DIR, 'log')
     conda: 'envs/base.yml'
@@ -139,7 +139,7 @@ rule primary:
 
 # Run checkv - decontaminate prophages
 rule checkv:
-    input: Path(PRIMARY_DIR, 'primary_prophages.fasta')
+    input: Path(PRIMARY_DIR, 'union_prophages.fasta')
     output: directory(Path(PROPHAGES_DIR, 'checkv'))
     params: CHECKV_DB=CHECKV_DB
     conda: "envs/checkv.yml"
