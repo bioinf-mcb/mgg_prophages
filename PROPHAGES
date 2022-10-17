@@ -24,8 +24,10 @@ GENBANK_FILE = config['GENBANK_FILE']
 OUTPUT_DIR = config['OUTPUT_DIR']
 
 VERSION = datetime.now().strftime('%Y-%m-%d')
-VERSION = '2022-10-14'  #### HARDCODED FOR TESTING ####
-print(f'{bcolors.WARNING}VERSION {VERSION} HARDCODED FOR TESTING!{bcolors.ENDC}')
+
+### testing
+# VERSION = '2022-10-14'  #### HARDCODED FOR TESTING ####
+# print(f'{bcolors.WARNING}VERSION {VERSION} HARDCODED FOR TESTING!{bcolors.ENDC}')
 
 PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
 PRIMARY_EXTEND = config['PRIMARY_EXTEND']
@@ -154,7 +156,7 @@ rule primary:
 # Run checkv - decontaminate prophages
 rule checkv:
     input: Path(PRIMARY_DIR, 'union_prophages.fasta')
-    output: directory(Path(CHECKV_DIR))
+    output: directory(Path(CHECKV_DIR)) # prophage decontamination
     params: CHECKV_DB=CHECKV_DB
     conda: "envs/checkv.yml"
     threads: workflow.cores * 1.0
@@ -168,7 +170,7 @@ rule process:
         checkv_dir=Path(CHECKV_DIR),
         union_prophages=Path(PRIMARY_DIR, 'union_prophages.fasta')
     output:
-        fasta=Path(PROPHAGES_DIR, 'prophages.fasta'),
+        fasta=Path(PROPHAGES_DIR, 'prophages.fasta'), # parse results
         tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
     params:
         CITIES= CITIES,
