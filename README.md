@@ -1,8 +1,14 @@
 # __MGG prophages__
 
 <div align="justify">
-Automatic & scalable prophage detection meta-tool. Exploits two tools for prophage detection (VirSorter & Phispy) and performs decontamination of bacterial DNA (CheckV). Primary prophages are collapsed (union) and analyzed by CheckV. Based on assigned completeness and confidence prophages can be filtered, accordingly to subsequent analyses.
-</div>
+Automatic & scalable prophage detection meta-tool.
+Exploits two tools for prophage detection (VirSorter & Phispy)
+and performs decontamination of bacterial DNA (CheckV).
+
+Primary detections are collapsed (union of detections) and analyzed by CheckV.
+Based on assigned completeness and confidence prophages can be filtered,
+accordingly to subsequent analyses.
+</div> <br>
 
 ## __Steps__ (Linux)
 
@@ -16,7 +22,7 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 ### Run prophage detection
 
 <div align="justify">
-To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file (BV-BRC recommended) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br><br>
+To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file (BV-BRC recommended) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br>
 
 ```sh
 snakemake --use-conda --cores all --snakefile SetupTools # setup dependencies
