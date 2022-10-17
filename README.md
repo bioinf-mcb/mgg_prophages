@@ -16,7 +16,7 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 ### Run prophage detection
 
 <div align="justify">
-To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file (via [BV-BRC](#https://www.bv-brc.org)) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br><br>
+To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file via [BV-BRC](#https://www.bv-brc.org) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br><br>
 
 ```sh
 snakemake --use-conda --cores all --snakefile SetupTools   # setup dependencies
