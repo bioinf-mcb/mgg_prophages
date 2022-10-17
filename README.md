@@ -23,9 +23,9 @@ snakemake --use-conda --cores all --snakefile SetupTools   # setup dependencies
 snakemake --use-conda --cores all --snakefile PROPHAGES    # execute workflow
 ```
 
-
 </div> <br>
-*comment: Make sure that bacterial and protein ids are unique and avoid white characters in bacterial contig ids.*
+
+*comment: make sure that bacterial and protein ids are unique and avoid white characters*
 
 
 ## Results
