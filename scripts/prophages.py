@@ -1,13 +1,19 @@
 """
 Load CheckV results on union of primary detections (collapsed overlaps).
 Decontaminate by using CheckV results and assing prophage completeness & confidence (of completeness).
-Save high-confidence prophages to fasta file, get their metadata and asssign IDs.
+Saves table of detections & fasta file.
 """
+
+
 # modules
 from pathlib import Path
 import pandas as pd
 import numpy as np
 import random
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
 
 # functions
 def get_decontaminated_prophage(row):
@@ -24,6 +30,7 @@ def get_decontaminated_prophage(row):
         if region == 'viral':
             start, end = coords.split('-')
             return pd.Series([start, end])
+
 
 def get_prophageID(n, cities, used):
     """ generate N_CITY_4DIGITNUMBER string that has not yet been generated (is unique)
@@ -42,16 +49,40 @@ def get_prophageID(n, cities, used):
         return get_prophageID(n, cities, used)
 
 
-# paths & params
-quality = Path(snakemake.input[0], 'quality_summary.tsv')
-contamination = Path(snakemake.input[0], 'contamination.tsv')
+def extract_phages(row, records):
+    """ Extract fragment of bacterial genome
+    records: bacterial records
+    row: phage metadata from dataframe
+    """
 
-# prophages_fasta = snakemake.output.fasta
+    primary_prophageID, start, end = row['primary_prophageID'], int(row['start']), int(row['end'])
+
+    for record in records:
+        if record.id.replace('.', '_') == primary_prophageID: break # remove dots ...
+
+    seq = Seq(record.seq[start-1:end+1])
+    return pd.Series([seq])
+
+
+def get_records(row):
+    """ Convert dataframe to records. """
+
+    contigID, start, end, seq = row['contigID'], row['start'], row['end'], row['seq']
+    record = SeqRecord(seq=Seq(seq), id=f'{contigID}_{start}_{end}', description=f'primary_prophage_length={len(seq)}')
+    return record
+
+
+
+# paths & params
+quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
+contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
+union_prophages = Path(snakemake.input.union_prophages)
+
+prophages_fasta = snakemake.output.fasta
 prophages_tsv = snakemake.output.tsv
 
 cities_file = snakemake.params.CITIES
 usedIDs_file = snakemake.params.USEDIDS
-CHECKV_TRESHOLD = snakemake.params.CHECKV_TRESHOLD
 
 
 # load tables
@@ -105,7 +136,7 @@ clean_df = contamination_df.loc[filt_clean].copy() # clean prophages (no contami
 decontaminate_df = contamination_df.loc[filt_decontaminate].copy() # contaminated prophages
 
 # remove contamination
-print('get_decontaminated_prophage function assumes that viral string occurs only once in region_types!!!!\n')
+print('get_decontaminated_prophage function assumes that viral string occurs only once in region_types (test on bigger dataset)!!!!')
 decontaminate_df[['start', 'end']] = decontaminate_df.apply(get_decontaminated_prophage, axis=1)
 
 # get clean prophages location
@@ -131,13 +162,22 @@ with open(usedIDs_file, 'a') as f:
 ### merge completeness & decontamination
 checv_df = quality_df.merge(decontaminate_df, on=['primary_prophageID', 'provirus'], how='outer')
 checkv_cols = ['prophageID', 'primary_prophageID', 'contigID',
-               'provirus', 'completeness', 'confidence', 'start', 'end',
+               'completeness', 'confidence', 'start', 'end',
                'completeness_method_and_confidence', 'region_types', 'region_coords_bp']
 
 checv_df = checv_df[checkv_cols]
 checv_df.sort_values(['contigID', 'start'], inplace=True, ascending=[False, True])
 checv_df.reset_index(drop=True, inplace=True)
 checv_df.fillna('None', inplace=True)
+
+
+### extract decontaminated sequences
+union_prophages_records = list(SeqIO.parse(union_prophages, 'fasta'))
+checv_df['seq'] = checv_df.apply(extract_phages, args=[union_prophages_records], axis=1) # extract seq
 checv_df.to_csv(prophages_tsv, sep='\t', index=False)
 
-print('Location of checkv should be relative to insert sequences of primary prophages')
+
+# convert to fasta
+prophages_records = checv_df.apply(get_records, axis=1) # convert to records
+prophages_records = prophages_records.to_list() # convert series2list
+n = SeqIO.write(prophages_records, prophages_fasta, 'fasta') # save fasta

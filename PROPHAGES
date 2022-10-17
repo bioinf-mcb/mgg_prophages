@@ -1,3 +1,18 @@
+"""
+Scalable prophage detection meta-tool
+Exploits two tools for prophage detection (VirSorter & Phispy)
+and performs decontamination with bacterial DNA (CheckV).
+
+Primary detections are collapsed (union of detections) and analyzed by CheckV.
+Based on assigned completeness and confidence prophages can be filtered,
+accordingly to subsequent analyses.
+
+version: 0.1
+date: 05.10.2022
+authors: Janusz Koszucki, Rafal Mostowy
+"""
+
+
 from pathlib import Path
 from datetime import datetime
 from scripts.utils import bcolors, process_input
@@ -14,7 +29,6 @@ print(f'{bcolors.WARNING}VERSION {VERSION} HARDCODED FOR TESTING!{bcolors.ENDC}'
 
 PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
 PRIMARY_EXTEND = config['PRIMARY_EXTEND']
-CHECKV_TRESHOLD = config['CHECKV_CONFIDENCE_TRESHOLD']
 
 SETUP_TOOLS_DIR = config['SETUP_TOOLS_DIR']
 PVOGS_DB = Path(SETUP_TOOLS_DIR, 'pVOGs.hmm')
@@ -59,11 +73,11 @@ print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}\n")
 
 rule target:
     input:
-        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),     # run phispy
-        Path(PRIMARY_DIR, 'raw', 'virsorter'),      # run virsorter
-        Path(PRIMARY_DIR, 'union_prophages.fasta'), # get collased detections
-        Path(PROPHAGES_DIR, 'checkv')              # checkv decontamination
-        # Path(PROPHAGES_DIR, 'prophages.tsv')        # prophages
+        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),       # run phispy
+        Path(PRIMARY_DIR, 'raw', 'virsorter'),        # run virsorter
+        Path(PRIMARY_DIR, 'union_prophages.fasta'),   # get collased detections
+        Path(PROPHAGES_DIR, 'checkv'),                # checkv decontamination
+        Path(PROPHAGES_DIR, 'prophages.tsv')          # prophages
 
 
             #####################################
@@ -147,15 +161,17 @@ rule checkv:
     shell:
         'checkv end_to_end {input} {output} -d {params.CHECKV_DB} -t {threads}; '
 
+
 # Get final results
 rule process:
-    input: Path(PROPHAGES_DIR, 'checkv')
+    input:
+        checkv_dir=Path(PROPHAGES_DIR, 'checkv'),
+        union_prophages=Path(PRIMARY_DIR, 'union_prophages.fasta')
     output:
-        # fasta=Path(PROPHAGES_DIR, 'prophages.fasta'),
+        fasta=Path(PROPHAGES_DIR, 'prophages.fasta'),
         tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
     params:
         CITIES= CITIES,
-        USEDIDS= USEDIDS,
-        CHECKV_TRESHOLD=CHECKV_TRESHOLD # high-confidence prophages
+        USEDIDS= USEDIDS
     conda: 'envs/base.yml'
     script: 'scripts/prophages.py'

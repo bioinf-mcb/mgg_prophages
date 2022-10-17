@@ -75,8 +75,7 @@ def extract_phages(row, records):
     contigID, start, end = row['contigID'], row['start'], row['end']
 
     for record in records:
-        print(record.id, contigID, start, end)
-        if record.id == contigID: break
+        if record.id.replace('.', '_') == contigID: break # remove dots ...
 
     seq = Seq(record.seq[start:end+1])
 
@@ -162,7 +161,7 @@ for header in headers:
     try:
         localisation = re.search('\d{1,12}-\d{1,12}-cat_[45]', header).group() # localisation
         start, end = localisation.split('-')[:2]
-        start = int(start) + 1
+        start, end = int(start) + 1, int(end) + 1
 
         contigID = re.search('VIRSorter_.*_gene', header).group() # contigID
         contigID = contigID.strip('VIRSorter_')
@@ -249,7 +248,6 @@ union_df = pd.DataFrame({'contigID': contigIDs,
                          'end_union': new_end})
 
 union_df = union_df.merge(metadata_df, on='contigID', how='left')
-# union_df = union_df.merge(primary_df, on='contigID', how='left', suffixes=('_union', '_primary'))
 
 
 ### extend
@@ -262,8 +260,6 @@ filt_end = (union_df['end'] >= union_df['contigLEN'])
 
 union_df.loc[filt_start, 'start'] = 1
 union_df.loc[filt_end, 'end'] = union_df['contigLEN']
-
-# union_df.to_csv(primary_output, sep='\t', index=False) # overwrite primary (nicer primary table)
 
 
                         ###################################
