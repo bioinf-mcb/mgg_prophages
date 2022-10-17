@@ -16,16 +16,16 @@ conda install -c conda-forge -c bioconda snakemake mamba biopython=1.79 pathlib=
 ### Run prophage detection
 
 <div align="justify">
-To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file (BV-BRC recommended) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br><br>
+To run workflow customize config file, download dependencies and execute workflow. Setup config file by providing paths to download dependencies and annotated bacterial genomes in genbank file ([BV-BRC](https://www.bv-brc.org/) recommended) and run analysis. If dependencies were already downloaded just provide path to the folder. To run test provide path to the test.gb in config file and execute workflow (optional). <br><br>
 
 ```sh
-snakemake --use-conda --cores all --snakefile SetupTools # setup dependencies
-snakemake --use-conda --cores all --snakefile PROPHAGES # execute workflow
+snakemake --use-conda --cores all --snakefile SetupTools   # setup dependencies
+snakemake --use-conda --cores all --snakefile PROPHAGES    # execute workflow
 ```
 
 
 </div> <br>
-** comment: Make sure that bacterial and protein ids are unique and avoid white characters in bacterial contig ids. **
+*comment: Make sure that bacterial and protein ids are unique and avoid white characters in bacterial contig ids.*
 
 
 ## Results
