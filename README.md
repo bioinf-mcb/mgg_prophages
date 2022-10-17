@@ -55,6 +55,19 @@ snakemake --use-conda --cores all --snakefile PROPHAGES
 <br>
 
 
+### Results
+
+* 0_virsorter_raw.tsv - raw heders from virsorter to be parsed
+* 1_phispy.tsv - pretty output from phispy
+* 1_virsorter.tsv - pretty output from virsorter
+* 2_primary.tsv - primary detections (1_phispy.tsv + 1_virsorter.tsv)
+* 3_union.tsv - collapsed primary overlapping detections (union) and extended (by EXTEND_PRIMARY variable)
+
+3_union.tsv - columns start and end correspond to collapsed overlapping detections that had beed detected by one of the tools. These detections will be decontaminated with checkv.
+
+* union_prophages.fasta - union prophages extracted to fasta
+
+
 ## __Details__ (preliminary)
 
 <div align="justify">
