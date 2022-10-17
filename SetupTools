@@ -17,11 +17,9 @@ rule search:
 rule pVOGs:
     output: Path(SETUP_TOOLS_DIR, 'pVOGs.hmm')
     shell:
-        'echo "FTP is corrupted and I cannot downlaod this, omg"; '
-        "touch {output}; "
-        # 'wget http://dmk-brain.ecn.uiowa.edu/pVOGs/downloads/All/AllvogHMMprofiles.tar.gz; '
-        # 'tar -zxvf AllvogHMMprofiles.tar.gz; '
-        # 'cat AllvogHMMprofiles/* > ; '
+        ### SEEMS LIKE REGULAR FTP IS NOT SUPPORTED ANY MORE ###
+        ### DOWNLOADING FROM MY PERSONAL MGG DROPBOX ###
+        'wget -O {output} https://www.dropbox.com/s/cvgm5nkuhv66b3f/pVOGs.hmm?dl=0; '
 
 # download CheckV database
 rule checkvDB:
