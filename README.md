@@ -1,7 +1,7 @@
 # __MGG prophages__
 
 <div align="justify">
-Automatic & scalable prophage detection meta-tool. Exploits two tools for prophage detection (VirSorter & Phispy) and performs decontamination of bacterial DNA (CheckV). Primary prophages are collapsed (union) and analyzed by CheckV. Based on assigned completeness and confidence prophages can be filtered, accordingly to subsequent analyses.
+Automatic & scalable prophage detection meta-tool. Exploits two tools for prophage detection (VirSorter & Phispy) and removes any bacterial contamination (CheckV). Primary prophages are collapsed (union) and analyzed by CheckV. Based on assigned completeness and confidence prophages can be filtered, accordingly to subsequent analyses.
 </div>
 
 ## __Steps__ (Linux)
