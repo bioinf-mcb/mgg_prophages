@@ -32,7 +32,7 @@ def get_decontaminated_prophage(row):
             return pd.Series([start, end])
 
 
-def get_prophageID(n, cities, used):
+def get_prophageID(n, cities, used, suffix=''):
     """ generate N_CITY_4DIGITNUMBER string that has not yet been generated (is unique)
     number: integer
     cities: list of cities names
@@ -41,7 +41,7 @@ def get_prophageID(n, cities, used):
 
     number = random.randrange(1000, 9999)
     city = random.choice(cities)
-    prophageID = f'{n}_{city}_{number}'
+    prophageID = f'{n}_{city}_{number}{suffix}'
 
     if prophageID not in used:
         return prophageID
@@ -82,8 +82,8 @@ prophages_fasta = snakemake.output.fasta
 prophages_tsv = snakemake.output.tsv
 
 cities_file = snakemake.params.CITIES
+suffix = snakemake.params.SUFFIX
 usedIDs_file = snakemake.params.USEDIDS
-
 
 # load tables
 quality_df = pd.read_csv(quality, sep='\t')
@@ -152,7 +152,7 @@ decontaminate_df.sort_values(['contigID', 'start'], inplace=True, ascending=[Fal
 n_prophageIDs = len(decontaminate_df)
 prophageIDs = []
 for n in range(1, n_prophageIDs+1):
-    prophageID = get_prophageID(n, cities, usedIDs)
+    prophageID = get_prophageID(n, cities, usedIDs, suffix=suffix)
     prophageIDs.append(prophageID)
 
 decontaminate_df['prophageID'] = prophageIDs # assign IDs
