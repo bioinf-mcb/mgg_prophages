@@ -65,12 +65,12 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     fasta = Path(OUTPUT_DIR, 'bacteria.fasta')
     metadata = Path(OUTPUT_DIR, 'bacteria.tsv')
 
+    if Path(genbank).exists() and Path(fasta).exists() and Path(metadata).exists():
+        print(f'{bcolors.WARNING}Seems that preprocessing was already runned! {bcolors.ENDC}', end='')
+        return fasta, genbank, metadata
+
     # create folder
     Path(OUTPUT_DIR).mkdir(exist_ok=True, parents=True)
-
-    if Path(genbank).exists() or Path(fasta).exists() or Path(metadata).exists():
-        print(f'{bcolors.WARNING}Seems that preprocessing was already runned! Continue with snakemake only! {bcolors.ENDC}', end='')
-        return fasta, genbank, metadata
 
     # paths
     records = list(SeqIO.parse(GENBANK_FILE, 'genbank'))
