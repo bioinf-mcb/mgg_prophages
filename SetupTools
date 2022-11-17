@@ -39,6 +39,6 @@ rule virsorter:
         'mkdir -p {output}; cd {output}; ' # setup virsorter tool
         'git clone https://github.com/simroux/VirSorter.git; '
         'cd VirSorter/Scripts; make clean; make; '
-        'cd {output}; '
+        'cd ../..; '
         'wget https://zenodo.org/record/1168727/files/virsorter-data-v2.tar.gz -O virsorterDB_v2.tar.gz; ' # download database
         'tar xvf virsorterDB_v2.tar.gz; mv virsorter-data virsorterDB_v2; rm -rf virsorterDB_v2.tar.gz; '
