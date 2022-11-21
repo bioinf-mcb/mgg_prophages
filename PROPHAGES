@@ -42,9 +42,7 @@ CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
 PROCESS_INPUT_DIR = Path(PROPHAGES_DIR, '0_input')
 PRIMARY_DIR = Path(PROPHAGES_DIR, '1_primary')
 CHECKV_DIR = Path(PROPHAGES_DIR, '2_checkv')
-CITIES = Path('scripts', 'cities.tsv')
 SUFFIX = config['PROPHAGEID_SUFFIX']
-USEDIDS = Path('scripts', 'usedIDs.tsv')
 
 
                         #############################################
@@ -173,8 +171,6 @@ rule process:
         fasta=Path(PROPHAGES_DIR, 'prophages.fasta'), # parse results
         tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
     params:
-        CITIES= CITIES,
-        SUFFIX=SUFFIX,
-        USEDIDS= USEDIDS
+        SUFFIX=SUFFIX
     conda: 'envs/base.yml'
     script: 'scripts/prophages.py'
