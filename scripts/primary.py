@@ -90,38 +90,38 @@ def get_records(row):
     return record
 
 
-# # paths & params
-# phispy_table = Path(snakemake.input.phispy)
-# virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
-# metadata_table = Path(snakemake.input.metadata)
-# genbank = Path(snakemake.input.genbank)
-#
-# fasta_output = snakemake.output.fasta  # prophages fasta
-# union_output = Path(snakemake.output.union)
-# primary_output = Path(snakemake.output.primary)
-# phispy_output = Path(snakemake.output.phispy)
-# virsorter_output = Path(snakemake.output.virsorter)
-#
-# PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
-# log = Path(str(snakemake.log))
+# paths & params
+phispy_table = Path(snakemake.input.phispy)
+virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
+metadata_table = Path(snakemake.input.metadata)
+genbank = Path(snakemake.input.genbank)
+
+fasta_output = snakemake.output.fasta  # prophages fasta
+union_output = Path(snakemake.output.union)
+primary_output = Path(snakemake.output.primary)
+phispy_output = Path(snakemake.output.phispy)
+virsorter_output = Path(snakemake.output.virsorter)
+
+PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
+log = Path(str(snakemake.log))
 
 
 #### testing
-work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14'
-phispy_table = Path(work_dir, '1_primary/raw/phispy.tsv')
-virsorter_dir = Path(work_dir, '1_primary/raw/virsorter', 'Predicted_viral_sequences')
-metadata_table = Path(work_dir, '0_input/bacteria.tsv')
-genbank = Path(work_dir, '0_input/bacteria.gb')
-
-fasta_output = Path(work_dir, '1_primary/testing_primary/prophages.fasta')  # prophages fasta
-union_output = Path(work_dir, '1_primary/testing_primary/union.tsv')
-primary_output = Path(work_dir, '1_primary/testing_primary/primary.tsv')
-phispy_output = Path(work_dir, '1_primary/testing_primary/phispy.tsv')
-virsorter_output = Path(work_dir, '1_primary/testing_primary/virsorter.tsv')
-virsorter_raw = Path(work_dir, '1_primary/testing_primary/virsorter_raw.tsv')
-
-PRIMARY_EXTEND = 2000
-log = Path(work_dir, '1_primary/tmp/log')
+# work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14'
+# phispy_table = Path(work_dir, '1_primary/raw/phispy.tsv')
+# virsorter_dir = Path(work_dir, '1_primary/raw/virsorter', 'Predicted_viral_sequences')
+# metadata_table = Path(work_dir, '0_input/bacteria.tsv')
+# genbank = Path(work_dir, '0_input/bacteria.gb')
+#
+# fasta_output = Path(work_dir, '1_primary/testing_primary/prophages.fasta')  # prophages fasta
+# union_output = Path(work_dir, '1_primary/testing_primary/union.tsv')
+# primary_output = Path(work_dir, '1_primary/testing_primary/primary.tsv')
+# phispy_output = Path(work_dir, '1_primary/testing_primary/phispy.tsv')
+# virsorter_output = Path(work_dir, '1_primary/testing_primary/virsorter.tsv')
+# virsorter_raw = Path(work_dir, '1_primary/testing_primary/virsorter_raw.tsv')
+#
+# PRIMARY_EXTEND = 2000
+# log = Path(work_dir, '1_primary/tmp/log')
 
 
 
