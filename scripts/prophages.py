@@ -36,7 +36,7 @@ def get_prophageID(n_prophageIDs, prefix=''):
     """Generate just simple prophage IDs: suffix_PHAGEnumber"""
 
     format = len(str(n_prophageIDs))
-    prophageIDs = [f'{suffix}_PHAGE' + f'{num}'.zfill(format) for num in list(range(1,n_prophageIDs+1))]
+    prophageIDs = [f'{prefix}_PHAGE' + f'{num}'.zfill(format) for num in list(range(1,n_prophageIDs+1))]
     return prophageIDs
 
 
@@ -117,14 +117,15 @@ clean_df = contamination_df.loc[filt_clean].copy() # clean prophages (no contami
 decontaminate_df = contamination_df.loc[filt_decontaminate].copy() # contaminated prophages
 
 # remove contamination
-print('get_decontaminated_prophage function assumes that viral string occurs only once in region_types (test on bigger dataset)!!!!')
+# print('get_decontaminated_prophage function assumes that viral string occurs only once in region_types (test on bigger dataset)!!!!')
 decontaminate_df[['start', 'end']] = decontaminate_df.apply(get_decontaminated_prophage, axis=1)
 
 # get clean prophages location
-clean_df[['start', 'end']] = clean_df.apply(lambda row: pd.Series(row['primary_prophageID'].split('_')[-2:]), axis=1)
+if len(clean_df):
+    clean_df[['start', 'end']] = clean_df.apply(lambda row: pd.Series(row['primary_prophageID'].split('_')[-2:]), axis=1)
+    # add clean phages
+    decontaminate_df = pd.concat([decontaminate_df, clean_df])
 
-# add clean phages
-decontaminate_df = pd.concat([decontaminate_df, clean_df])
 decontaminate_df['contigID'] = decontaminate_df.apply(lambda row: '_'.join(row['primary_prophageID'].split('_')[:-2]), axis=1)
 decontaminate_df.sort_values(['contigID', 'start'], inplace=True, ascending=[False, True])
 
