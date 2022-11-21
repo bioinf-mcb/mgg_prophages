@@ -31,7 +31,7 @@ def collapse_overlapping(input_detections):
     OUPUT: [(0, 8), (10, 30), (100, 1001)]
 
     """
-
+    # print(list(input_detections)[:10])
     # covert to sets
     detections = []
     for d in input_detections:
@@ -90,37 +90,38 @@ def get_records(row):
     return record
 
 
-# paths & params
-phispy_table = Path(snakemake.input.phispy)
-virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
-metadata_table = Path(snakemake.input.metadata)
-genbank = Path(snakemake.input.genbank)
-
-fasta_output = snakemake.output.fasta  # prophages fasta
-union_output = Path(snakemake.output.union)
-primary_output = Path(snakemake.output.primary)
-phispy_output = Path(snakemake.output.phispy)
-virsorter_output = Path(snakemake.output.virsorter)
-
-PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
-log = Path(str(snakemake.log))
-
-
-# #### testing
-# phispy_table = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/phispy.tsv')
-# virsorter_dir = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/raw/virsorter', 'Predicted_viral_sequences')
-# metadata_table = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.tsv')
-# genbank = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/0_input/bacteria.gb')
+# # paths & params
+# phispy_table = Path(snakemake.input.phispy)
+# virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
+# metadata_table = Path(snakemake.input.metadata)
+# genbank = Path(snakemake.input.genbank)
 #
-# fasta_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/prophages.fasta')  # prophages fasta
-# union_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/union.tsv')
-# primary_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/primary.tsv')
-# phispy_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/phispy.tsv')
-# virsorter_output = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/virsorter.tsv')
-# virsorter_raw = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/virsorter_raw.tsv')
+# fasta_output = snakemake.output.fasta  # prophages fasta
+# union_output = Path(snakemake.output.union)
+# primary_output = Path(snakemake.output.primary)
+# phispy_output = Path(snakemake.output.phispy)
+# virsorter_output = Path(snakemake.output.virsorter)
 #
-# PRIMARY_EXTEND = 2000
-# log = Path('/home/MCB/jkoszucki/phagedb/PROPHAGES_2022-10-14/1_primary/tmp/log')
+# PRIMARY_EXTEND = snakemake.params.PRIMARY_EXTEND
+# log = Path(str(snakemake.log))
+
+
+#### testing
+work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14'
+phispy_table = Path(work_dir, '1_primary/raw/phispy.tsv')
+virsorter_dir = Path(work_dir, '1_primary/raw/virsorter', 'Predicted_viral_sequences')
+metadata_table = Path(work_dir, '0_input/bacteria.tsv')
+genbank = Path(work_dir, '0_input/bacteria.gb')
+
+fasta_output = Path(work_dir, '1_primary/testing_primary/prophages.fasta')  # prophages fasta
+union_output = Path(work_dir, '1_primary/testing_primary/union.tsv')
+primary_output = Path(work_dir, '1_primary/testing_primary/primary.tsv')
+phispy_output = Path(work_dir, '1_primary/testing_primary/phispy.tsv')
+virsorter_output = Path(work_dir, '1_primary/testing_primary/virsorter.tsv')
+virsorter_raw = Path(work_dir, '1_primary/testing_primary/virsorter_raw.tsv')
+
+PRIMARY_EXTEND = 2000
+log = Path(work_dir, '1_primary/tmp/log')
 
 
 
@@ -199,8 +200,8 @@ virsorter_df = pd.DataFrame({'contigID': contigIDs,
 
 virsorter_df['tool'] = 'virsorter'
 virsorter_df.sort_values('start', ascending=True, inplace=True)
+virsorter_df['contigID'] = virsorter_df['contigID'].str.split('_Klebsiell', expand=True)[0] # tmp fix; solved in main snakefile
 virsorter_df.to_csv(virsorter_output, sep='\t', index=False)
-
 
                         ########################################
                         ####### GET FINAL DETECTIONS ###########

@@ -76,8 +76,12 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     records = list(SeqIO.parse(GENBANK_FILE, 'genbank'))
 
     # save fasta & gebank
-    n = SeqIO.write(records, fasta, 'fasta')
     n = SeqIO.write(records, genbank, 'genbank')
+    # avoid virsorter incosistent naming
+    for r in records:
+        r.description = ''
+        r.name = ''
+    n = SeqIO.write(records, fasta, 'fasta')
 
     # get metadata & records
     recordIDs, recordDESCs, recordLEN = [], [], []
