@@ -77,13 +77,6 @@ PREFIX = snakemake.params.PREFIX
 quality_df = pd.read_csv(quality, sep='\t')
 contamination_df = pd.read_csv(contamination, sep='\t')
 
-# load lists to generate prophageIDs
-with open(cities_file, 'r+') as f:
-    cities = [city.strip() for city in f.readlines()]
-
-with open(usedIDs_file, 'r+') as f:
-    usedIDs = [ID.strip() for ID in f.readlines()]
-
 
 # filter & rename columns
 quality_cols = ['contig_id', 'provirus', 'completeness', 'completeness_method']
