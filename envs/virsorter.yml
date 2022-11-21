@@ -18,6 +18,5 @@ dependencies:
    - perl-list-moreutils
    - diamond=0.9.14
    - make
-   - perl-cpan
    - gcc
    - metagene_annotator
