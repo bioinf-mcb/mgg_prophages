@@ -32,7 +32,7 @@ def get_decontaminated_prophage(row):
             return pd.Series([start, end])
 
 
-def get_prophageID(n_prophageIDs, suffix=''):
+def get_prophageID(n_prophageIDs, prefix=''):
     """Generate just simple prophage IDs: suffix_PHAGEnumber"""
 
     format = len(str(n_prophageIDs))
@@ -71,7 +71,7 @@ union_prophages = Path(snakemake.input.union_prophages)
 
 prophages_fasta = snakemake.output.fasta
 prophages_tsv = snakemake.output.tsv
-suffix = snakemake.params.SUFFIX
+PREFIX = snakemake.params.PREFIX
 
 # load tables
 quality_df = pd.read_csv(quality, sep='\t')
@@ -138,7 +138,7 @@ decontaminate_df.sort_values(['contigID', 'start'], inplace=True, ascending=[Fal
 ### give prophage IDs
 # generate IDs
 n_prophageIDs = len(decontaminate_df)
-prophageIDs = get_prophageID(n_prophageIDs, suffix=suffix)
+prophageIDs = get_prophageID(n_prophageIDs, prefix=PREFIX)
 decontaminate_df['prophageID'] = prophageIDs # assign IDs
 
 ### merge completeness & decontamination

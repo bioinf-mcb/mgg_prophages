@@ -42,7 +42,7 @@ CHECKV_DB = Path(SETUP_TOOLS_DIR, 'checkvDB')
 PROCESS_INPUT_DIR = Path(PROPHAGES_DIR, '0_input')
 PRIMARY_DIR = Path(PROPHAGES_DIR, '1_primary')
 CHECKV_DIR = Path(PROPHAGES_DIR, '2_checkv')
-SUFFIX = config['PROPHAGEID_SUFFIX']
+PREFIX = config['PROPHAGEID_PREFIX']
 
 
                         #############################################
@@ -171,6 +171,6 @@ rule process:
         fasta=Path(PROPHAGES_DIR, 'prophages.fasta'), # parse results
         tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
     params:
-        SUFFIX=SUFFIX
+        PREFIX=PREFIX
     conda: 'envs/base.yml'
     script: 'scripts/prophages.py'
