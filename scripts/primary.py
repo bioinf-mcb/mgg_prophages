@@ -200,6 +200,7 @@ virsorter_df = pd.DataFrame({'contigID': contigIDs,
 
 virsorter_df['tool'] = 'virsorter'
 virsorter_df.sort_values('start', ascending=True, inplace=True)
+### TMP FIX - should not lead to errors but is handled earlier in pipeline
 virsorter_df['contigID'] = virsorter_df['contigID'].str.split('_Klebsiell', expand=True)[0] # tmp fix; solved in main snakefile
 virsorter_df.to_csv(virsorter_output, sep='\t', index=False)
 
