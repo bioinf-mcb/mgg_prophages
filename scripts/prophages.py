@@ -20,7 +20,7 @@ def get_decontaminated_prophage(row):
     """
     Get new viral location (decontaminated) from processed checkv contamination.tsv table.
     This function assumes that in region_types columns string viral occurs only once!
-    But maybe on large scalen analysis it can get more complicated like: host,viral,host,viral
+    But maybe on large scale analysis it can get more complicated like: host,viral,host,viral
     """
 
     region_types = row['region_types'].split(',')
@@ -40,6 +40,20 @@ def get_prophageID(n_prophageIDs, prefix=''):
     return prophageIDs
 
 
+def add_size_category(row):
+    """ get prophage size category"""
+
+    prophageID = row['prophageID']
+    start, end = int(row['start']), int(row['end'])
+    length = end - start + 1
+
+    if length <= 10000: size_category = 'S'
+    elif length > 10000 and length <= 90000: size_category= 'M'
+    else: size_category = 'L'
+
+    return f'{prophageID}_{size_category}'
+
+
 def extract_phages(row, records):
     """ Extract fragment of bacterial genome
     records: bacterial records
@@ -47,19 +61,25 @@ def extract_phages(row, records):
     """
 
     primary_prophageID, start, end = row['primary_prophageID'], int(row['start']), int(row['end'])
+    length = end - start + 1
 
     for record in records:
-        if record.id.replace('.', '_') == primary_prophageID: break # remove dots ...
+        if record.id == primary_prophageID:
+            if len(record.seq) == length: # primary prophage
+                seq = Seq(record.seq)
+            else:                         # decontaminated prophage
+                seq = Seq(record.seq[start-1:end+1])
 
-    seq = Seq(record.seq[start-1:end+1])
     return pd.Series([seq])
 
 
 def get_records(row):
-    """ Convert dataframe to records. """
+    """ Convert dataframe to records. Assing phage size category"""
 
-    contigID, start, end, seq = row['contigID'], row['start'], row['end'], row['seq']
-    record = SeqRecord(seq=Seq(seq), id=f'{contigID}_{start}_{end}', description=f'primary_prophage_length={len(seq)}')
+    prophageID, seq = row['prophageID'], row['seq']
+    length = len(seq)
+
+    record = SeqRecord(seq=Seq(seq), id=f'{prophageID}', description='')
     return record
 
 
@@ -79,26 +99,23 @@ contamination_df = pd.read_csv(contamination, sep='\t')
 
 
 # filter & rename columns
-quality_cols = ['contig_id', 'provirus', 'completeness', 'completeness_method']
+quality_cols = ['contig_id', 'provirus', 'completeness', 'checkv_quality']
 contamination_cols = ['contig_id', 'provirus', 'region_types', 'region_coords_bp']
-rename_map = {'contig_id': 'primary_prophageID',
-              'completeness_method': 'completeness_method_and_confidence'}
 
 quality_df = quality_df[quality_cols]
 contamination_df = contamination_df[contamination_cols]
+
+rename_map = {'contig_id': 'primary_prophageID',
+              'checkv_quality': 'confidence'}
 
 quality_df.rename(rename_map, inplace=True, axis=1)
 contamination_df.rename(rename_map, inplace=True, axis=1)
 
 ### format columns
-# confidence
-quality_df['confidence'] = quality_df['completeness_method_and_confidence'].str.split(' ', expand=True)[1]
-quality_df['confidence'].fillna(False, inplace=True)
-
-filt_high = (quality_df['confidence'] == '(high-confidence)')
-filt_medium = (quality_df['confidence'] == '(medium-confidence)')
-filt_low = (quality_df['confidence'] == '(lower-bound)')
-filt_undetermined = (quality_df['confidence'] == False)
+filt_high = (quality_df['confidence'] == 'High-quality') | (quality_df['confidence'] == 'Complete')
+filt_medium = (quality_df['confidence'] == 'Medium-quality')
+filt_low = (quality_df['confidence'] == 'Low-quality')
+filt_undetermined = (quality_df['confidence'] == 'Not-determined')
 
 quality_df.loc[filt_high, 'confidence'] = 'high'
 quality_df.loc[filt_medium, 'confidence'] = 'medium'
@@ -116,8 +133,8 @@ filt_clean = (contamination_df['provirus'] == 'No')
 clean_df = contamination_df.loc[filt_clean].copy() # clean prophages (no contamination)
 decontaminate_df = contamination_df.loc[filt_decontaminate].copy() # contaminated prophages
 
-# remove contamination
 # print('get_decontaminated_prophage function assumes that viral string occurs only once in region_types (test on bigger dataset)!!!!')
+# remove contamination
 decontaminate_df[['start', 'end']] = decontaminate_df.apply(get_decontaminated_prophage, axis=1)
 
 # get clean prophages location
@@ -139,7 +156,10 @@ decontaminate_df['prophageID'] = prophageIDs # assign IDs
 checv_df = quality_df.merge(decontaminate_df, on=['primary_prophageID', 'provirus'], how='outer')
 checkv_cols = ['prophageID', 'primary_prophageID', 'contigID',
                'completeness', 'confidence', 'start', 'end',
-               'completeness_method_and_confidence', 'region_types', 'region_coords_bp']
+               'region_types', 'region_coords_bp']
+
+# add size category to prophageIDs
+checv_df['prophageID'] = checv_df.apply(add_size_category, axis=1)
 
 checv_df = checv_df[checkv_cols]
 checv_df.sort_values(['contigID', 'start'], inplace=True, ascending=[False, True])
