@@ -39,16 +39,22 @@ To obtain high-confidence prophages one should consider prophages full-filling c
 ## __Details__ (preliminary)
 
 <div align="justify">
-Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are collapsed (union) decontaminated from bacterial DNA and their completeness (CheckV aai_completeness) and confidence of completeness estimation (CheckV aai_confidence).
+Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are collapsed (union) decontaminated from bacterial DNA and their completeness and confidence of completeness estimation.
+</div><br>
 
+Other info (to be organized):
+Completeness and confidence is calculated based on columns from CheckV quality_summary file, respectively completeness and checkv_quality. CheckV complete proviruses are converted to high confidence, 100% complete detections.
+
+Each phage is assigned size category in prophageID:
+if length <= 10000: size_category = 'S'
+elif length < 10000 and length <= 90000: size_category= 'M'
+else: size_category = 'L'
 
 Very large primary propahge predictions(>= 500kb) are true predictions from VirSorter (sometimes overlapping VirSorter prediction).
 
 Resources estimation:
 - VirSorter calculated 400 Klebsiella genomes for 48h (128 CPU, peak RAM 18G).
 - PhiSpy calculated 400 Klebsiella genomes for < 1day (128 CPU).
-</div> <br>
-
 
 
 ## __DEV info__
