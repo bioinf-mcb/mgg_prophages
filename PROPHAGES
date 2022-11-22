@@ -22,12 +22,11 @@ configfile: 'config.yml'
 # paths & params
 GENBANK_FILE = config['GENBANK_FILE']
 OUTPUT_DIR = config['OUTPUT_DIR']
-
-VERSION = datetime.now().strftime('%Y-%m-%d')
+VERSION = config['DATE']
 
 ### testing
-VERSION = '2022-11-14'  #### HARDCODED FOR TESTING ####
-print(f'{bcolors.WARNING}VERSION {VERSION} HARDCODED FOR TESTING!{bcolors.ENDC}')
+# VERSION = '2022-11-14'  #### HARDCODED FOR TESTING ####
+# print(f'{bcolors.WARNING}VERSION {VERSION} HARDCODED FOR TESTING!{bcolors.ENDC}')
 
 PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
 PRIMARY_EXTEND = config['PRIMARY_EXTEND']
