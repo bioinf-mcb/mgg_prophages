@@ -7,16 +7,3 @@ OUTPUT_DIR: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-
 PROPHAGEID_PREFIX: 'KPH' # prophage dataset suffix to be added (can be empty)
 PRIMARY_EXTEND: 2000 # number of base pairs to extend primary prophage detections (checkv input)
 DATE: 2022-11-14
-
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
