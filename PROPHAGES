@@ -22,7 +22,7 @@ configfile: 'config.yml'
 # paths & params
 GENBANK_FILE = config['GENBANK_FILE']
 OUTPUT_DIR = config['OUTPUT_DIR']
-VERSION = config['DATE']
+VERSION = str(config['DATE'])
 
 ### testing
 # VERSION = '2022-11-14'  #### HARDCODED FOR TESTING ####
