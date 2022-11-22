@@ -97,7 +97,7 @@ quality_df['confidence'].fillna(False, inplace=True)
 
 filt_high = (quality_df['confidence'] == '(high-confidence)')
 filt_medium = (quality_df['confidence'] == '(medium-confidence)')
-filt_low = (quality_df['confidence'] == '(low-confidence)')
+filt_low = (quality_df['confidence'] == '(lower-bound)')
 filt_undetermined = (quality_df['confidence'] == False)
 
 quality_df.loc[filt_high, 'confidence'] = 'high'
