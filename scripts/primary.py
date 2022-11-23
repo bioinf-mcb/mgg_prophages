@@ -270,8 +270,7 @@ bacterial_records = list(SeqIO.parse(genbank, 'genbank')) # load bacterial genom
 union_df.drop_duplicates(subset=['contigID', 'start', 'end'], inplace=True)
 union_df['seq'] = union_df.apply(extract_phages, args=[bacterial_records], axis=1) # extract seq
 
-cols = ['contigID', 'start', 'end', 'start_union', 'end_union', \
-        'contigDESC', 'contigLEN', 'seq']
+cols = ['contigID', 'start', 'end', 'contigDESC', 'contigLEN', 'seq']
 
 union_df.sort_values(['contigLEN', 'start'], ascending=[False, True], inplace=True)
 union_df[cols].to_csv(union_output, sep='\t', index=False) # save table
