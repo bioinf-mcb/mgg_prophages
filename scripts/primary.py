@@ -13,6 +13,7 @@ Putative PhiSpy prophages: all
 
 # modules
 import re
+import itertools
 import pandas as pd
 from pathlib import Path
 from Bio import SeqIO
@@ -77,7 +78,7 @@ def extract_phages(row, records):
     for record in records:
         if record.id.replace('.', '_') == contigID: break # remove dots ...
 
-    seq = Seq(record.seq[start:end+1])
+    seq = Seq(record.seq[start-1:end+1])
 
     return pd.Series([seq])
 
@@ -92,7 +93,7 @@ def get_records(row):
 
 # paths & params
 phispy_table = Path(snakemake.input.phispy)
-virsorter_dir = Path(snakemake.input.virsorter, 'Predicted_viral_sequences')
+virsorter_dirs = [Path(dir, 'Predicted_viral_sequences') for dir in snakemake.input.virsorter]
 metadata_table = Path(snakemake.input.metadata)
 genbank = Path(snakemake.input.genbank)
 
@@ -145,8 +146,9 @@ phispy_df.to_csv(phispy_output, sep='\t', index=False)
                         #################################
 
 ### process virsorter results
-# load fasta files
-virsorter_fasta = virsorter_dir.glob('*[1254].fasta') # only specified categories
+# load fasta files (only specified categories)
+virsorter_fasta = [list(virsorter_dir.glob('*[1254].fasta')) for virsorter_dir in virsorter_dirs]
+virsorter_fasta = list(itertools.chain(*virsorter_fasta))
 
 headers = []
 for fasta in virsorter_fasta:
