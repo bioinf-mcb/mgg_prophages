@@ -66,9 +66,10 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     metadata = Path(OUTPUT_DIR, 'bacteria.tsv')
     SPLIT_FASTA = Path(OUTPUT_DIR, 'fasta_split')
 
-    if Path(genbank).exists() and Path(fasta).exists() and Path(metadata).exists() and Path(split_fasta).exists():
+    if Path(genbank).exists() and Path(fasta).exists() and Path(metadata).exists() and Path(SPLIT_FASTA).exists():
         print(f'{bcolors.WARNING}Seems that preprocessing was already runned! {bcolors.ENDC}', end='')
-        return fasta, genbank, metadata
+        fnames = [path.stem for path in Path(SPLIT_FASTA).glob('*.fasta')]
+        return fnames, fasta, genbank, metadata
 
     # create folder
     Path(OUTPUT_DIR).mkdir(exist_ok=True, parents=True)
@@ -94,16 +95,15 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     n = SeqIO.write(records, fasta, 'fasta')
 
     # save each genome separately for VirSorter run
-    genomeIDs_short = [recordID.split('_')[0] for recordID in recordIDs]
-    genomeIDs_long = [recordID.split('_')[:-1] for recordID in recordIDs]
-    for genomeID_short, genomeID_long in zip(genomeIDs_short, genomeIDs_long):
+    genomeIDs = [recordID.split('_')[0] for recordID in recordIDs]
+    fnames = ['_'.join(recordID.split('_')[:-1]) for recordID in recordIDs]
+    for genomeID, stem in zip(genomeIDs, fnames):
         genome_records = []
         for record in records:
-            if record.id.split('_')[0] == genomeID_short:
+            if record.id.split('_')[0] == genomeID:
                 genome_records.append(record)
-                records.remove(record)
 
-        fname = Path(SPLIT_FASTA, f'{genomeID_long}.fasta')
+        fname = Path(SPLIT_FASTA, f'{stem}.fasta')
         SeqIO.write(genome_records, fname, 'fasta')
 
     # save metadata & records
@@ -113,4 +113,4 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
 
     metadata_df.to_csv(metadata, sep='\t', index=False)
 
-    return fasta, genbank, metadata
+    return fnames, fasta, genbank, metadata
