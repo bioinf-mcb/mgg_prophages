@@ -156,10 +156,10 @@ for fasta in virsorter_fasta:
     for record in records:
         headers.append(record.id) # extract headers
 
-
 ### extract localisation & contigID
 contigIDs, starts, ends, circurality = [], [], [], []
 for header in headers:
+    circular = False # default
     # phage within contig
     try:
         localisation = re.search('\d{1,12}-\d{1,12}-cat_[45]', header).group() # localisation
@@ -178,7 +178,7 @@ for header in headers:
             if '-circular' in header:
                 circular = True
                 header = header.replace('-circular', '')
-            else: circular = False
+            else: pass
 
             contigID = re.search('VIRSorter_.*-cat', header).group() # contigID
             contigID = contigID.strip('VIRSorter_').strip('-cat')

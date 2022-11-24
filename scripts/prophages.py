@@ -50,8 +50,8 @@ def relocate_phages(row):
 
     # get curated location if any
     if row['end_relative'] != 0:
-        start = row['start_primary'] + row['start_relative']
-        end = row['start_primary'] + row['end_relative']
+        start = row['start_primary'] + row['start_relative'] - 1
+        end = row['start_primary'] + row['end_relative'] - 1
     else:
         start = row['start_primary']
         end = row['end_primary']
