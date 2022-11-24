@@ -3,7 +3,6 @@ SETUP_TOOLS_DIR: /home/MCB/jkoszucki/storage/phageDB/MGG_PROPHAGES_DEPENDENCIES
 
 # PROPHAGES params
 GENBANK_FILE: test.gb # one bacterial genome per file (fasta & gb)
-OUTPUT_DIR: ./ # output directory
-VERSION: 1999-01-01
+OUTPUT_DIR: ./prophages_test # output directory
 PROPHAGEID_PREFIX: 'KPH' # prophage dataset suffix to be added (can be empty)
 PRIMARY_EXTEND: 2000 # number of base pairs to extend primary prophage detections (checkv input)

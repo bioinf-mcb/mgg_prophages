@@ -22,9 +22,8 @@ configfile: 'config.yml'
 # paths & params
 GENBANK_FILE = config['GENBANK_FILE']
 OUTPUT_DIR = config['OUTPUT_DIR']
-VERSION = str(config['VERSION'])
 
-PROPHAGES_DIR = Path(OUTPUT_DIR, "PROPHAGES_" + VERSION)
+PROPHAGES_DIR = Path(OUTPUT_DIR)
 PRIMARY_EXTEND = config['PRIMARY_EXTEND']
 
 SETUP_TOOLS_DIR = config['SETUP_TOOLS_DIR']

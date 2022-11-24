@@ -3,7 +3,6 @@ SETUP_TOOLS_DIR: /home/MCB/jkoszucki/storage/phageDB/MGG_PROPHAGES_DEPENDENCIES
 
 # PROPHAGES params
 GENBANK_FILE: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/BACTERIA_2022-11-05/bacteria.gb # one bacterial genome per file (fasta & gb)
-OUTPUT_DIR: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08 # output directory
-VERSION: 2022-11-22
+OUTPUT_DIR: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-22 # output directory
 PROPHAGEID_PREFIX: 'KPH' # prophage dataset suffix to be added (can be empty)
 PRIMARY_EXTEND: 2000 # number of base pairs to extend primary prophage detections (checkv input)
