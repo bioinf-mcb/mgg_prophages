@@ -121,6 +121,15 @@ prophages_fasta = snakemake.output.fasta
 prophages_tsv = snakemake.output.tsv
 PREFIX = snakemake.params.PREFIX
 
+# ### testing
+# quality = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv','quality_summary.tsv')
+# contamination = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv', 'contamination.tsv')
+# union_prophages = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/1_primary/union_prophages.fasta')
+#
+# prophages_fasta = Path('/home/MCB/jkoszucki/tmp/prophages.fasta')
+# prophages_tsv = Path('/home/MCB/jkoszucki/tmp/prophages.tsv')
+# PREFIX = 'TEST'
+
 
 # load tables
 quality_df = pd.read_csv(quality, sep='\t')
