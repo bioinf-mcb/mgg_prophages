@@ -48,7 +48,7 @@ print(f"{bcolors.OKGREEN}---------------------------    START   ----------------
 
 # curate & annotate (via PATRIC) bacterial genomes
 print(f"Preprocessing... ", end='')
-BACTERIA_FASTA, BACTERIA_GB, metadata = process_input(GENBANK_FILE, PROCESS_INPUT_DIR)
+GENOME_FNAMES, BACTERIA_FASTA, BACTERIA_GB, metadata = process_input(GENBANK_FILE, PROCESS_INPUT_DIR)
 print(f"{bcolors.OKGREEN}Done!{bcolors.ENDC}")
 
 # check dependencies
@@ -67,11 +67,11 @@ print(f"{bcolors.OKGREEN}Done! {bcolors.ENDC}\n")
 
 rule target:
     input:
-        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),       # run phispy
-        Path(PRIMARY_DIR, 'raw', 'virsorter'),        # run virsorter
-        Path(PRIMARY_DIR, 'union_prophages.fasta'),   # get collased detections
-        Path(CHECKV_DIR),                             # checkv decontamination
-        Path(PROPHAGES_DIR, 'prophages.tsv')          # prophages
+        Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),                                           # run phispy
+        expand(Path(PRIMARY_DIR, 'raw', 'virsorter', '{genome}'), genome=GENOME_FNAMES),  # run virsorter
+        Path(PRIMARY_DIR, 'union_prophages.fasta'),                                       # get collased detections
+        Path(CHECKV_DIR),                                                                 # checkv decontamination
+        Path(PROPHAGES_DIR, 'prophages.tsv')                                              # prophages
 
 
             #####################################
@@ -96,12 +96,12 @@ rule phispy:
 # run virsorter
 rule virsorter:
     input:
-        FASTA=Path(BACTERIA_FASTA),
+        FASTA=Path(PROCESS_INPUT_DIR, 'fasta_split', '{genome}' + '.fasta'),
         VIRSORTER_TOOL=Path(VIRSORTER_TOOL),
         VIRSORTER_DB=Path(VIRSORTER_DB)
-    output: directory(Path(PRIMARY_DIR, 'raw', 'virsorter'))
+    output: directory(Path(PRIMARY_DIR, 'raw', 'virsorter', '{genome}'))
     conda: 'envs/virsorter.yml'
-    threads: workflow.cores * 1.0
+    threads: 8
     shell:
     ####################################################################################
     ############################### VIRSORTER IS BUGGY! ################################
@@ -126,7 +126,7 @@ rule virsorter:
 rule primary:
     input:
         phispy=Path(PRIMARY_DIR, 'raw', 'phispy.tsv'),
-        virsorter=Path(PRIMARY_DIR, 'raw', 'virsorter'),
+        virsorter=expand(Path(PRIMARY_DIR, 'raw', 'virsorter', '{genome}'), genome=GENOME_FNAMES),
         metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv'),
         genbank=Path(BACTERIA_GB)
     output:

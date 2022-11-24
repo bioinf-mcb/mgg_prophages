@@ -45,7 +45,7 @@ def split_primary_prophageID(row):
 
 def relocate_phages(row):
     """ Based on location of prophages on bacterial contigs (primary) and
-    relative location of ChekcV curated prophages (relative to location of extracted primary prophages)
+    relative location of CheckV curated prophages (relative to location of extracted primary prophages)
     define new curated location of prophages on bacterial contigs. """
 
     # get curated location if any
@@ -89,7 +89,6 @@ def extract_phages(row, records):
 
     primary_prophageID = row['primary_prophageID']
     start_relative, end_relative = int(row['start_relative']), int(row['end_relative'])
-    length = end_relative - start_relative + 1
 
     for record in records:
         if record.id == primary_prophageID:

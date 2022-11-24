@@ -39,7 +39,7 @@ To obtain high-confidence prophages one should consider prophages full-filling c
 ## __Details__ (preliminary)
 
 <div align="justify">
-Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are collapsed (union) decontaminated from bacterial DNA and their completeness and confidence of completeness estimation.
+Tool detects prophages in bacterial genomes by using two complementary tools: VirSorter and PhiSpy. Primary prophage detection is any region detected the tools as a prophage. Subsequently, detections are collapsed (union) decontaminated from bacterial DNA and their completeness and confidence of completeness estimation. Prophage locations are returned as bp positions.
 </div><br>
 
 Other info (to be organized):

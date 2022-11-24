@@ -64,24 +64,19 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
     genbank = Path(OUTPUT_DIR, 'bacteria.gb')
     fasta = Path(OUTPUT_DIR, 'bacteria.fasta')
     metadata = Path(OUTPUT_DIR, 'bacteria.tsv')
+    SPLIT_FASTA = Path(OUTPUT_DIR, 'fasta_split')
 
-    if Path(genbank).exists() and Path(fasta).exists() and Path(metadata).exists():
+    if Path(genbank).exists() and Path(fasta).exists() and Path(metadata).exists() and Path(SPLIT_FASTA).exists():
         print(f'{bcolors.WARNING}Seems that preprocessing was already runned! {bcolors.ENDC}', end='')
-        return fasta, genbank, metadata
+        fnames = [path.stem for path in Path(SPLIT_FASTA).glob('*.fasta')]
+        return fnames, fasta, genbank, metadata
 
     # create folder
     Path(OUTPUT_DIR).mkdir(exist_ok=True, parents=True)
+    Path(SPLIT_FASTA).mkdir(exist_ok=True, parents=True)
 
     # paths
     records = list(SeqIO.parse(GENBANK_FILE, 'genbank'))
-
-    # save fasta & gebank
-    n = SeqIO.write(records, genbank, 'genbank')
-    # avoid virsorter incosistent naming
-    for r in records:
-        r.description = ''
-        r.name = ''
-    n = SeqIO.write(records, fasta, 'fasta')
 
     # get metadata & records
     recordIDs, recordDESCs, recordLEN = [], [], []
@@ -90,6 +85,27 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
         recordDESCs.append(record.description)
         recordLEN.append(len(record.seq))
 
+    # save fasta & gebank
+    n = SeqIO.write(records, genbank, 'genbank')
+
+    # avoid virsorter incosistent naming
+    for r in records:
+        r.description = ''
+        r.name = ''
+    n = SeqIO.write(records, fasta, 'fasta')
+
+    # save each genome separately for VirSorter run
+    genomeIDs = [recordID.split('_')[0] for recordID in recordIDs]
+    fnames = ['_'.join(recordID.split('_')[:-1]) for recordID in recordIDs]
+    for genomeID, stem in zip(genomeIDs, fnames):
+        genome_records = []
+        for record in records:
+            if record.id.split('_')[0] == genomeID:
+                genome_records.append(record)
+
+        fname = Path(SPLIT_FASTA, f'{stem}.fasta')
+        SeqIO.write(genome_records, fname, 'fasta')
+
     # save metadata & records
     metadata_df = pd.DataFrame({'contigID': recordIDs,
                                 'contigDESC': recordDESCs,
@@ -97,4 +113,4 @@ def process_input(GENBANK_FILE, OUTPUT_DIR):
 
     metadata_df.to_csv(metadata, sep='\t', index=False)
 
-    return fasta, genbank, metadata
+    return fnames, fasta, genbank, metadata
