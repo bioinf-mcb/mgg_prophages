@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import itertools
 
-work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/'
+work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH'
 kaspah_groups_table = '/home/MCB/jkoszucki/Code/mgg_bacteria/dependencies/tables/kaspah_coding.tsv'
 
 genbank_dir = Path(work_dir, 'ONE_FILE_VRS_BACTERIA_2022-11-05//1_PATRIC_batches')
