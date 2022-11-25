@@ -6,8 +6,8 @@ import itertools
 work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH'
 kaspah_groups_table = '/home/MCB/jkoszucki/Code/mgg_bacteria/dependencies/tables/kaspah_coding.tsv'
 
-genbank_dir = Path(work_dir, 'ONE_FILE_VRS_BACTERIA_2022-11-05//1_PATRIC_batches')
-metadata_tsv = Path(work_dir, 'ONE_FILE_VRS_BACTERIA_2022-11-05//bacteria.tsv')
+genbank_dir = Path(work_dir, 'ONE_FILE_VRS_BACTERIA_2022-11-05/1_PATRIC_batches')
+metadata_tsv = Path(work_dir, 'ONE_FILE_VRS_BACTERIA_2022-11-05/bacteria.tsv')
 
 genbank_out = Path(work_dir, 'BACTERIA_2022-11-25/bacteria.gb')
 fasta_out = Path(work_dir, 'BACTERIA_2022-11-25/bacteria.fasta')
@@ -36,7 +36,7 @@ for record in records:
     groups_mapper[contigID] = record.id.replace(old_group, new_group)
 
 # rename contigs in metadata
-metadata_df['contigID'].map(groups_mapper)
+metadata_df['contigID'] = metadata_df['contigID'].map(groups_mapper)
 
 
 SeqIO.write(records, genbank_out, 'genbank')
