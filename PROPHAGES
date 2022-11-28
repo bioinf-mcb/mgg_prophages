@@ -114,7 +114,7 @@ rule virsorter:
     # ERROR_3: Can't locate File/Which.pm in @INC:
     # FIX_3: 'cpan install File:Which; '
     # Using dimond flag speeds up search and sensitivity.
-        'cpan install File:Which; '                                                            # fix env
+        'cpan install File:Which || true; '                                                    # fix env
         "VIRSORTER_ENV_PATH=$(echo $(conda info | grep 'active env location') | cut -c 23-); " # fix env
         'export PERL5LIB=$VIRSORTER_ENV_PATH/lib/perl5/site_perl/5.22.0; '                     # fix env
         'rm -rf {output}; '                                                                    # remove old results
