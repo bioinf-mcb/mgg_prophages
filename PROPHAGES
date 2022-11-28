@@ -120,6 +120,7 @@ rule virsorter:
         'rm -rf {output}; '                                                                    # remove old results
         '{input.VIRSORTER_TOOL} -f {input.FASTA} '
         '--diamond --ncpu {threads} --db 1 --data-dir {input.VIRSORTER_DB} --wdir {output}; '
+        'mkdir -p {output}; '                                                                  # prevent error if vrs fails
 
 
 # extract primary prophages & collapse overlapping ones (union)
