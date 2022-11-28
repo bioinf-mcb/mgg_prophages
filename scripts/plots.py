@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import string
 
-work_dir = '/Users/januszkoszucki/local_results/draw_prophages/'
+work_dir = '/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH/PROPHAGES_2022-11-25'
 prophages_table = Path(work_dir, 'prophages.tsv')
 output_dir = Path(work_dir, 'plots')
 

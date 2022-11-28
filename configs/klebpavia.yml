@@ -2,7 +2,7 @@
 SETUP_TOOLS_DIR: /home/MCB/jkoszucki/storage/phageDB/MGG_PROPHAGES_DEPENDENCIES
 
 # PROPHAGES params
-GENBANK_FILE: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KLEBPAVIA/BACTERIA_2022-11-16/bacteria.gb # one bacterial genome per file (fasta & gb)
-OUTPUT_DIR: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KLEBPAVIA/PROPHAGES_2022-11-XX # output directory
+GENBANK_FILE: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KLEBPAVIA/1_BACTERIA_2022-11/bacteria.gb # one bacterial genome per file (fasta & gb)
+OUTPUT_DIR: /home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KLEBPAVIA/2_PROPHAGES_2022-11 # output directory
 PROPHAGEID_PREFIX: 'KBV' # prophage dataset suffix to be added (can be empty)
 PRIMARY_EXTEND: 2000 # number of base pairs to extend primary prophage detections (checkv input)
