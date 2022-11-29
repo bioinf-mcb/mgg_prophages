@@ -54,7 +54,7 @@ Very large primary propahge predictions(>= 500kb) are true predictions from VirS
 
 
 400 Klebsiella genomes with 128 CPU took 24h of calculations with RAM peak at 18GB.
-
+1800 Klebsiella genomes with 128 CPU took 48+(?)h of calculations with RAM peak at 60GB.
 
 
 ## __DEV info__
