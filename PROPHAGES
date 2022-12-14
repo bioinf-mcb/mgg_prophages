@@ -37,6 +37,7 @@ PROCESS_INPUT_DIR = Path(PROPHAGES_DIR, '0_input')
 PRIMARY_DIR = Path(PROPHAGES_DIR, '1_primary')
 CHECKV_DIR = Path(PROPHAGES_DIR, '2_checkv')
 PREFIX = config['PROPHAGEID_PREFIX']
+FINAL_EXTEND = config['FINAL_EXTEND']
 
 
                         #############################################
@@ -71,7 +72,7 @@ rule target:
         expand(Path(PRIMARY_DIR, 'raw', 'virsorter', '{genome}'), genome=GENOME_FNAMES),  # run virsorter
         Path(PRIMARY_DIR, 'union_prophages.fasta'),                                       # get collased detections
         Path(CHECKV_DIR),                                                                 # checkv decontamination
-        Path(PROPHAGES_DIR, 'prophages.tsv')                                              # prophages
+        Path(PROPHAGES_DIR, 'ext_prophages.tsv')                                              # prophages
 
 
             #####################################
@@ -161,11 +162,13 @@ rule checkv:
 rule process:
     input:
         checkv_dir=Path(CHECKV_DIR),
-        union_prophages=Path(PRIMARY_DIR, 'union_prophages.fasta')
+        union_prophages=Path(PRIMARY_DIR, 'union_prophages.fasta'),
+        metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv')
     output:
-        fasta=Path(PROPHAGES_DIR, 'prophages.fasta'), # parse results
-        tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
+        fasta=Path(PROPHAGES_DIR, 'ext_prophages.fasta'), # parse results
+        tsv=Path(PROPHAGES_DIR, 'ext_prophages.tsv')
     params:
-        PREFIX=PREFIX
+        PREFIX=PREFIX,
+        FINAL_EXTEND=FINAL_EXTEND
     conda: 'envs/base.yml'
     script: 'scripts/prophages.py'

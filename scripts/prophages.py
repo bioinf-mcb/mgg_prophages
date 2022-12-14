@@ -59,6 +59,19 @@ def relocate_phages(row):
     return pd.Series([start, end])
 
 
+def extend(row, EXTEND):
+    """ Extend final detection of prophages by user defined value """
+
+    start = row['start'] - EXTEND
+    end = row['end'] + EXTEND
+    contig_length = row['contigLEN']
+
+    if start <= 1: start = 1
+    if end >= contig_length: end = contig_length
+
+    return pd.Series([start, end])
+
+
 def get_prophageID(n_prophageIDs, prefix=''):
     """Generate just simple prophage IDs: suffix_PHAGEnumber"""
 
@@ -115,10 +128,12 @@ def get_records(row):
 quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
 contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
 union_prophages = Path(snakemake.input.union_prophages)
+metadata = Path(snakemake.input.metadata)
 
 prophages_fasta = snakemake.output.fasta
 prophages_tsv = snakemake.output.tsv
 PREFIX = snakemake.params.PREFIX
+EXTEND = snakemake.params.FINAL_EXTEND
 
 # ### testing
 # quality = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv','quality_summary.tsv')
@@ -128,12 +143,12 @@ PREFIX = snakemake.params.PREFIX
 # prophages_fasta = Path('/home/MCB/jkoszucki/tmp/prophages.fasta')
 # prophages_tsv = Path('/home/MCB/jkoszucki/tmp/prophages.tsv')
 # PREFIX = 'TEST'
-
+# EXTEND = snakemake.params.FINAL_EXTEND
 
 # load tables
 quality_df = pd.read_csv(quality, sep='\t')
 contamination_df = pd.read_csv(contamination, sep='\t')
-
+metadata_df = pd.read_csv(metadata, sep='\t')
 
 # filter & rename columns
 quality_cols = ['contig_id', 'completeness', 'completeness_method']
@@ -181,6 +196,11 @@ for col in ['start_primary', 'end_primary', 'start_relative', 'end_relative']:
 
 # correct prophage location based on relative checkv postions
 checkv_df[['start', 'end']] = checkv_df.apply(relocate_phages, axis=1)
+
+# extend prophages by user defined value
+checkv_df = checkv_df.merge(metadata_df, on='contigID', how='left')
+checkv_df[['start', 'end']] = checkv_df.apply(extend, args=[EXTEND], axis=1)
+checkv_df.drop(['contigDESC', 'contigLEN'], axis=1, inplace=True)
 
 # sort
 confidence_order = ['high', 'medium', 'low', 'undetermined']

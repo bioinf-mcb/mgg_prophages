@@ -6,3 +6,4 @@ GENBANK_FILE: test.gb # one bacterial genome per file (fasta & gb)
 OUTPUT_DIR: ./prophages_test # output directory
 PROPHAGEID_PREFIX: 'TEST' # prophage dataset suffix to be added (can be empty)
 PRIMARY_EXTEND: 2000 # number of base pairs to extend primary prophage detections (checkv input)
+FINAL_EXTEND: 2000 # number of base pairs to extend final detections
