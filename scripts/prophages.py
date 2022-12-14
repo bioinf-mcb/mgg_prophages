@@ -94,21 +94,18 @@ def add_size_category(row):
     return f'{prophageID}_{size_category}'
 
 
-def extract_phages(row, records):
+def extract_phages(row, bacteria_records):
     """ Extract fragment of bacterial genome
     records: bacterial records
     row: phage metadata from dataframe
     """
 
-    primary_prophageID = row['primary_prophageID']
-    start_relative, end_relative = int(row['start_relative']), int(row['end_relative'])
+    contigID, start, end = row['contigID'], int(row['start']), int(row['end'])
 
-    for record in records:
-        if record.id == primary_prophageID:
-            if row['end_relative'] == 0: # primary prophage
-                seq = record.seq
-            else:                         # decontaminated prophage
-                seq = record.seq[start_relative-1:end_relative+1]
+    seq = f'Error in extracting seq ({contigID}, {start}, {end})'
+    for record in bacteria_records:
+        if record.id == contigID:
+            seq = record.seq[start-1:end+1]
 
     return pd.Series([str(seq)])
 
@@ -127,7 +124,7 @@ def get_records(row):
 # paths & params
 quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
 contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
-union_prophages = Path(snakemake.input.union_prophages)
+bacteria = Path(snakemake.input.fasta)
 metadata = Path(snakemake.input.metadata)
 
 prophages_fasta = snakemake.output.fasta
@@ -138,7 +135,6 @@ EXTEND = snakemake.params.FINAL_EXTEND
 # ### testing
 # quality = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv','quality_summary.tsv')
 # contamination = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv', 'contamination.tsv')
-# union_prophages = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/1_primary/union_prophages.fasta')
 #
 # prophages_fasta = Path('/home/MCB/jkoszucki/tmp/prophages.fasta')
 # prophages_tsv = Path('/home/MCB/jkoszucki/tmp/prophages.tsv')
@@ -149,6 +145,7 @@ EXTEND = snakemake.params.FINAL_EXTEND
 quality_df = pd.read_csv(quality, sep='\t')
 contamination_df = pd.read_csv(contamination, sep='\t')
 metadata_df = pd.read_csv(metadata, sep='\t')
+
 
 # filter & rename columns
 quality_cols = ['contig_id', 'completeness', 'completeness_method']
@@ -217,8 +214,8 @@ checkv_df['prophageID'] = prophageIDs # assign IDs
 checkv_df['prophageID'] = checkv_df.apply(add_size_category, axis=1)
 
 ### extract decontaminated sequences
-union_prophages_records = list(SeqIO.parse(union_prophages, 'fasta'))
-checkv_df['seq'] = checkv_df.apply(extract_phages, args=[union_prophages_records], axis=1) # extract seq
+bacteria_records = list(SeqIO.parse(bacteria, 'fasta'))
+checkv_df['seq'] = checkv_df.apply(extract_phages, args=[bacteria_records], axis=1) # extract seq
 
 cols = ['prophageID', 'contigID', 'start', 'end', 'completeness', 'confidence', \
         'primary_prophageID', 'start_primary', 'end_primary', 'start_relative', 'end_relative', 'seq']
