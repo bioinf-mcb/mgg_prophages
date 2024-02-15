@@ -4,4 +4,5 @@ channels:
   - conda-forge
 dependencies:
   - phispy=4.2.6
+  - biopython=1.79
   - hmmer
