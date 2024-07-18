@@ -1,5 +1,5 @@
 # SetupTools (setup databases & tools)
-SETUP_TOOLS_DIR: /home/MCB/jkoszucki/storage/phageDB/MGG_PROPHAGES_DEPENDENCIES
+SETUP_TOOLS_DIR: setuptools
 
 # PROPHAGES params
 GENBANK_FILE: test.gb # annotated bacteria
