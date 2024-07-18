@@ -37,8 +37,12 @@ def get_confidence(row):
 def split_primary_prophageID(row):
     """ split primary prophageID and to contigID, start_primary, end_primary """
 
-    contigID = '_'.join(str(row['primary_prophageID']).split('_')[:4])
-    start_primary, end_primary = str(row['primary_prophageID']).split('_')[4:]
+    try:
+        contigID = '_'.join(str(row['primary_prophageID']).split('_')[:2])
+        start_primary, end_primary = str(row['primary_prophageID']).split('_')[2:]
+    except ValueError: 
+        print('ERROR! Remove "_" characters from bacterial genome identifiers!')
+        exit()
 
     return pd.Series([contigID, start_primary, end_primary])
 
@@ -122,17 +126,32 @@ def get_records(row):
 
 
 # paths & params
-quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
-contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
-bacteria = Path(snakemake.input.fasta)
-metadata = Path(snakemake.input.metadata)
+# quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
+# contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
+# bacteria = Path(snakemake.input.fasta)
+# metadata = Path(snakemake.input.metadata)
 
-prophages_fasta = snakemake.output.fasta
-prophages_tsv = snakemake.output.tsv
-PREFIX = snakemake.params.PREFIX
-EXTEND = snakemake.params.FINAL_EXTEND
+# prophages_fasta = snakemake.output.fasta
+# prophages_tsv = snakemake.output.tsv
+# PREFIX = snakemake.params.PREFIX
+# EXTEND = snakemake.params.FINAL_EXTEND
 
-# ### testing
+### testing
+working_dir = '/net/pr2/projects/plgrid/plggmgmcb/team/jkoszucki/code/mgg_kleb/_data/2_INTERMEDIATE/08_PROPHAGES/KAG/BATCH1'
+input_dir = Path(working_dir, '0_input')
+checkv_dir = Path(working_dir, '2_checkv')
+
+quality = Path(checkv_dir, 'quality_summary.tsv')
+contamination = Path(checkv_dir, 'contamination.tsv')
+bacteria = Path(input_dir, 'bacteria.fasta')
+metadata = Path(input_dir, 'bacteria.tsv')
+
+prophages_fasta = Path(working_dir, 'prophages.fasta')
+prophages_tsv = Path(working_dir, 'prophages.tsv')
+PREFIX = 'T1'
+EXTEND = 2000
+
+
 # quality = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv','quality_summary.tsv')
 # contamination = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv', 'contamination.tsv')
 #
@@ -157,14 +176,14 @@ contamination_df = contamination_df[contamination_cols]
 rename_map = {'contig_id': 'primary_prophageID',
               'completeness_method': 'confidence'}
 
-quality_df.rename(rename_map, inplace=True, axis=1)
-contamination_df.rename(rename_map, inplace=True, axis=1)
+quality_df = quality_df.rename(rename_map, axis=1)
+contamination_df = contamination_df.rename(rename_map, axis=1)
 
 # completeness & confidence
-quality_df['completeness'].fillna(0, inplace=True)
+quality_df['completeness'] = quality_df['completeness'].fillna(0)
 quality_df['completeness'] = pd.to_numeric(quality_df['completeness'], downcast='integer')
 
-quality_df['confidence'].fillna('None', inplace=True)
+quality_df['confidence'] = quality_df['confidence'].fillna('None')
 quality_df['confidence'] = quality_df.apply(get_confidence, axis=1)
 
 ### main checkv table
@@ -176,13 +195,13 @@ else: print('WARNING! CheckV tables are inconsistent! (prophages.py)')
 
 # relative locations of checkv viral regions to primary detections
 checkv_df = checkv_df.set_index(['primary_prophageID', 'completeness', 'confidence']).apply(lambda row: row.str.split(',').explode()).reset_index()
-checkv_df['region_types'].fillna('viral', inplace=True)
-checkv_df['region_coords_bp'].fillna('0-0', inplace=True)
+checkv_df['region_types'] = checkv_df['region_types'].fillna('viral')
+checkv_df['region_coords_bp'] = checkv_df['region_coords_bp'].fillna('0-0')
 
 filt_viral_regions = (checkv_df['region_types'] == 'viral')
 checkv_df = checkv_df.loc[filt_viral_regions]
 checkv_df[['start_relative', 'end_relative']] = checkv_df['region_coords_bp'].str.split('-', expand=True)
-checkv_df.drop(['region_types', 'region_coords_bp'], axis=1, inplace=True)
+checkv_df = checkv_df.drop(['region_types', 'region_coords_bp'], axis=1)
 
 # primary detections start & end
 checkv_df[['contigID', 'start_primary', 'end_primary']] = checkv_df.apply(split_primary_prophageID, axis=1)
@@ -197,12 +216,12 @@ checkv_df[['start', 'end']] = checkv_df.apply(relocate_phages, axis=1)
 # extend prophages by user defined value
 checkv_df = checkv_df.merge(metadata_df, on='contigID', how='left')
 checkv_df[['start', 'end']] = checkv_df.apply(extend, args=[EXTEND], axis=1)
-checkv_df.drop(['contigDESC', 'contigLEN'], axis=1, inplace=True)
+checkv_df = checkv_df.drop(['contigDESC', 'contigLEN'], axis=1)
 
 # sort
 confidence_order = ['high', 'medium', 'low', 'undetermined']
 checkv_df['confidence'] = pd.Categorical(checkv_df['confidence'], categories = confidence_order)
-checkv_df.sort_values(['confidence', 'completeness'], inplace=True, ascending=[True, False])
+checkv_df = checkv_df.sort_values(['confidence', 'completeness'], ascending=[True, False])
 
 ### give prophage IDs
 # generate IDs
