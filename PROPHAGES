@@ -72,7 +72,7 @@ rule target:
         expand(Path(PRIMARY_DIR, 'raw', 'virsorter', '{genome}'), genome=GENOME_FNAMES),  # run virsorter
         Path(PRIMARY_DIR, 'union_prophages.fasta'),                                       # get collased detections
         Path(CHECKV_DIR),                                                                 # checkv decontamination
-        Path(PROPHAGES_DIR, 'ext_prophages.tsv')                                              # prophages
+        Path(PROPHAGES_DIR, 'prophages.tsv')                                              # prophages
 
 
             #####################################
@@ -165,8 +165,8 @@ rule process:
         fasta=Path(BACTERIA_FASTA),
         metadata=Path(PROCESS_INPUT_DIR, 'bacteria.tsv')
     output:
-        fasta=Path(PROPHAGES_DIR, 'ext_prophages.fasta'), # parse results
-        tsv=Path(PROPHAGES_DIR, 'ext_prophages.tsv')
+        fasta=Path(PROPHAGES_DIR, 'prophages.fasta'), # parse results
+        tsv=Path(PROPHAGES_DIR, 'prophages.tsv')
     params:
         PREFIX=PREFIX,
         FINAL_EXTEND=FINAL_EXTEND
