@@ -124,41 +124,16 @@ def get_records(row):
     return record
 
 
-
 # paths & params
-# quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
-# contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
-# bacteria = Path(snakemake.input.fasta)
-# metadata = Path(snakemake.input.metadata)
+quality = Path(snakemake.input.checkv_dir, 'quality_summary.tsv')
+contamination = Path(snakemake.input.checkv_dir, 'contamination.tsv')
+bacteria = Path(snakemake.input.fasta)
+metadata = Path(snakemake.input.metadata)
 
-# prophages_fasta = snakemake.output.fasta
-# prophages_tsv = snakemake.output.tsv
-# PREFIX = snakemake.params.PREFIX
-# EXTEND = snakemake.params.FINAL_EXTEND
-
-### testing
-working_dir = '/net/pr2/projects/plgrid/plggmgmcb/team/jkoszucki/code/mgg_kleb/_data/2_INTERMEDIATE/08_PROPHAGES/KAG/BATCH1'
-input_dir = Path(working_dir, '0_input')
-checkv_dir = Path(working_dir, '2_checkv')
-
-quality = Path(checkv_dir, 'quality_summary.tsv')
-contamination = Path(checkv_dir, 'contamination.tsv')
-bacteria = Path(input_dir, 'bacteria.fasta')
-metadata = Path(input_dir, 'bacteria.tsv')
-
-prophages_fasta = Path(working_dir, 'prophages.fasta')
-prophages_tsv = Path(working_dir, 'prophages.tsv')
-PREFIX = 'T1'
-EXTEND = 2000
-
-
-# quality = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv','quality_summary.tsv')
-# contamination = Path('/home/MCB/jkoszucki/storage/dbmgg/databases/bacteria/KASPAH_2022-11-08/PROPHAGES_2022-11-14/2_checkv', 'contamination.tsv')
-#
-# prophages_fasta = Path('/home/MCB/jkoszucki/tmp/prophages.fasta')
-# prophages_tsv = Path('/home/MCB/jkoszucki/tmp/prophages.tsv')
-# PREFIX = 'TEST'
-# EXTEND = snakemake.params.FINAL_EXTEND
+prophages_fasta = snakemake.output.fasta
+prophages_tsv = snakemake.output.tsv
+PREFIX = snakemake.params.PREFIX
+EXTEND = snakemake.params.FINAL_EXTEND
 
 # load tables
 quality_df = pd.read_csv(quality, sep='\t')
